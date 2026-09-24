@@ -1,0 +1,14 @@
+diff --git a/robocasa/models/fixtures/counter.py b/robocasa/models/fixtures/counter.py
+--- a/robocasa/models/fixtures/counter.py
++++ b/robocasa/models/fixtures/counter.py
+@@ -810,7 +810,9 @@ class Counter(ProcGenFixture):
+ 
+             if len(valid_geoms) > 0:
+                 # remove duplicates as needed
+-                valid_geoms = list(set(valid_geoms))
++                # Preserve order: XML elements hash by identity, so a set makes
++                # seeded region sampling vary across fresh Python processes.
++                valid_geoms = list(dict.fromkeys(valid_geoms))
+ 
+             for g in valid_geoms:
+                 top_pos = s2a(g.get("pos"))

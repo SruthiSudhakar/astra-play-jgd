@@ -357,6 +357,7 @@ git clone https://github.com/ARISE-Initiative/robosuite.git astra_robotics/src/r
 git -C astra_robotics/src/robosuite checkout 5ce6643f3092639d08f7b0f90ed1c6a84f50552c
 git clone https://github.com/robocasa/robocasa.git astra_robotics/src/robocasa
 git -C astra_robotics/src/robocasa checkout 4f8a2980def75a55dff96b990745b83540425f09
+git -C astra_robotics/src/robocasa apply ../../../patches/robocasa-deterministic-counter.patch
 python -m pip install -r requirements.txt
 export DYLD_FALLBACK_LIBRARY_PATH="/usr/lib${DYLD_FALLBACK_LIBRARY_PATH:+:$DYLD_FALLBACK_LIBRARY_PATH}"
 python -m robocasa.scripts.setup_macros

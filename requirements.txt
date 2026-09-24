@@ -1,0 +1,9 @@
+# Python 3.11; upstream versions tested by RoboCasa365.
+-e ./astra_robotics/src/robosuite
+-e ./astra_robotics/src/robocasa
+mujoco==3.3.1
+numpy==2.2.5
+openai>=2,<3
+pydantic>=2,<3
+imageio>=2.37,<3
+imageio-ffmpeg>=0.6,<0.7

@@ -1,0 +1,24 @@
+# Local Python environments, upstream checkouts, and downloaded assets
+astra_robotics/
+astra_robotics_py314_backup/
+.venv/
+venv/
+
+# Run artifacts and recordings
+outputs/
+*.mov
+*.mp4
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python and macOS caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.DS_Store
