@@ -1,5 +1,6 @@
 """RoboCasa365: numerical scene state -> Astra XYZ -> IK -> joint controller."""
 import argparse
+from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 import json
 import base64
@@ -23,10 +24,39 @@ MOCK_PICKUP_Z = [0.15, -0.005, -0.005, 0.15]
 CAMERAS = ["robot0_agentview_left", "robot0_agentview_right", "robot0_eye_in_hand"]
 
 
+class RobotFrame:
+    """Episode-fixed, upright frame at the Panda mounting body (link0)."""
+    description = ("episode_robot; meters; origin at initial Panda arm mount; "
+                   "+X forward, +Y left, +Z up; fixed throughout episode. "
+                   "All body XYZ and orientations below use this frame; arm joints remain joint-local.")
+
+    def __init__(self, env):
+        self.body_name = env.robots[0].robot_model.naming_prefix + "link0"
+        body = env.sim.model.body_name2id(self.body_name)
+        self.origin = env.sim.data.body_xpos[body].copy()
+        mount = env.sim.data.body_xmat[body].reshape(3, 3)
+        # Panda link0 +X is forward. Remove tiny settling tilt so +Z is exactly up.
+        forward = mount[:, 0].copy()
+        forward[2] = 0
+        forward /= np.linalg.norm(forward)
+        up = np.array([0., 0., 1.])
+        self.rotation = np.column_stack([forward, np.cross(up, forward), up])
+
+    def to_robot(self, world_xyz):
+        return self.rotation.T @ (np.asarray(world_xyz) - self.origin)
+
+    def to_world(self, robot_xyz):
+        return self.rotation @ np.asarray(robot_xyz) + self.origin
+
+    def orientation(self, world_rotation):
+        return self.rotation.T @ np.asarray(world_rotation).reshape(3, 3)
+
+
 class CameraViews:
     """Local browser display avoids competing macOS GUI event loops."""
-    def __init__(self, env, display=True):
+    def __init__(self, env, robot_frame, display=True):
         self.env, self.frame, self.last_update = env, b"", 0.0
+        self.robot_frame = robot_frame
         self.renderer = mujoco.Renderer(env.sim.model._model, height=240, width=320)
         # Match RoboCasa's viewer: hide collision meshes, show textured visuals.
         self.scene_option = mujoco.MjvOption()
@@ -91,8 +121,53 @@ class CameraViews:
         for name in CAMERAS:
             self.renderer.update_scene(self.env.sim.data._data, camera=name,
                                        scene_option=self.scene_option)
-            images.append(self.renderer.render().copy())
+            images.append(self.draw_axes(self.renderer.render().copy(), name))
         return images
+
+    def draw_axes(self, pixels, camera):
+        """Project virtual rulers using the current camera pose, including wrist motion."""
+        from PIL import Image, ImageDraw
+        model, data = self.env.sim.model, self.env.sim.data
+        camera_id = model.camera_name2id(camera)
+        rotation = data.cam_xmat[camera_id].reshape(3, 3)
+        height, width = pixels.shape[:2]
+        focal = height / (2 * np.tan(np.deg2rad(model.cam_fovy[camera_id]) / 2))
+
+        def project(world):
+            point = rotation.T @ (world - data.cam_xpos[camera_id])
+            if point[2] >= -0.01:
+                return None
+            return np.array([width / 2 + focal * point[0] / -point[2],
+                             height / 2 - focal * point[1] / -point[2]])
+
+        canvas = Image.fromarray(pixels)
+        draw = ImageDraw.Draw(canvas)
+        tip = data.site_xpos[self.env.robots[0].eef_site_id["right"]]
+        # The mount may be outside the wrist view; a translated copy at the tip
+        # shows the same fixed directions without changing the action origin.
+        for origin, length, tag in [(self.robot_frame.origin, 0.15, "mount"),
+                                    (tip, 0.10, "tip")]:
+            start = project(origin)
+            if start is None or not (0 <= start[0] < width and 24 <= start[1] < height - 25):
+                continue
+            draw.ellipse(tuple(start - 2) + tuple(start + 2), fill="white")
+            for axis, color in enumerate(["#ff5050", "#50ff70", "#5599ff"]):
+                end = project(origin + self.robot_frame.rotation[:, axis] * length)
+                if end is None or not (4 <= end[0] < width - 20 and 25 <= end[1] < height - 25):
+                    continue
+                draw.line([tuple(start), tuple(end)], fill=color, width=2)
+                delta = end - start
+                norm = np.linalg.norm(delta)
+                if norm > 5:
+                    direction = delta / norm
+                    side = np.array([-direction[1], direction[0]])
+                    draw.polygon([tuple(end), tuple(end - 6 * direction + 3 * side),
+                                  tuple(end - 6 * direction - 3 * side)], fill=color)
+                draw.text(tuple(end + [2, -5]), "+" + "XYZ"[axis], fill=color, stroke_width=1, stroke_fill="black")
+            draw.text(tuple(start + [3, 3]), tag, fill="white", stroke_width=1, stroke_fill="black")
+        draw.rectangle((0, height - 23, width, height), fill="black")
+        draw.text((4, height - 21), "Robot axes: mount 15cm / tip copy 10cm", fill="white")
+        return np.asarray(canvas)
 
     def update(self, images=None):
         if self.server is None:
@@ -128,6 +203,57 @@ class Position(BaseModel):
     note: str = ""
 
 
+def action_result(call, command, start, end, rejection=None):
+    """Robot-only feedback; reaching a waypoint does not imply task success."""
+    target = np.array([command.x, command.y, command.z])
+    requested = target - start
+    measured = end - start
+    error = float(np.linalg.norm(target - end))
+    requested_distance = float(np.linalg.norm(requested))
+    # Use signed progress in the requested direction. Sideways or opposite
+    # motion cannot make a short command look successful merely because its
+    # target began within the 1 cm endpoint tolerance.
+    progress = (1.0 if requested_distance < 0.001 else
+                float(np.dot(measured, requested) / requested_distance**2))
+    reached = rejection is None and error < 0.01 and progress >= 0.8
+    result = (f"Action rejected; no motion executed: {rejection}" if rejection else
+              "Waypoint reached (within 1 cm and at least 80% requested progress)." if reached else
+              "Target not reached; motion may be obstructed or there may be another cause.")
+    return {
+        "call": call, "coordinate_frame": "episode_robot; meters",
+        "action": command.model_dump(),
+        "start_tip_xyz": np.asarray(start).round(5).tolist(),
+        "end_tip_xyz": np.asarray(end).round(5).tolist(),
+        "requested_displacement_xyz": requested.round(5).tolist(),
+        "measured_displacement_xyz": measured.round(5).tolist(),
+        "requested_progress_fraction": round(progress, 4),
+        "waypoint_error_m": round(error, 5),
+        "status": "rejected" if rejection else "reached" if reached else "not_reached",
+        "result": result,
+    }
+
+
+def prompt_history(actions):
+    """Compact robot feedback for Astra; detailed summaries remain in local traces."""
+    compact = []
+    note_from = max(0, len(actions) - 2)
+    for index, item in enumerate(actions):
+        entry = {
+            "call": item["call"],
+            "target_xyz": [item["action"][axis] for axis in "xyz"],
+            "gripper": item["action"]["gripper"],
+            "requested_delta_xyz": item["requested_displacement_xyz"],
+            "measured_delta_xyz": item["measured_displacement_xyz"],
+            "progress_fraction": item["requested_progress_fraction"],
+            "error_m": item["waypoint_error_m"],
+            "status": item["status"],
+        }
+        if index >= note_from and item["action"].get("note"):
+            entry["note"] = item["action"]["note"]
+        compact.append(entry)
+    return compact
+
+
 def make_env(args):
     # Also seed legacy helpers that use global RNGs (e.g. camera perturbations).
     random.seed(args.seed)
@@ -155,29 +281,43 @@ def make_env(args):
     )
 
 
-def scene_state(env, site):
+def scene_state(env, site, frame):
     """All episode objects and fixtures, including articulated joint positions."""
+    def joint_state(name):
+        value = np.asarray(env.sim.data.get_joint_qpos(name)).copy()
+        joint = env.sim.model.joint_name2id(name)
+        if env.sim.model.jnt_type[joint] == mujoco.mjtJoint.mjJNT_FREE:
+            value[:3] = frame.to_robot(value[:3])
+            rotation = np.empty(9)
+            mujoco.mju_quat2Mat(rotation, value[3:])
+            mujoco.mju_mat2Quat(value[3:], frame.orientation(rotation).ravel())
+        return value.round(5).tolist()
+
     def state(item):
         body = env.sim.model.body_name2id(item.root_body)
+        quaternion = np.empty(4)
+        mujoco.mju_mat2Quat(quaternion, frame.orientation(env.sim.data.body_xmat[body]).ravel())
         result = {
             "type": type(item).__name__,
-            "xyz": env.sim.data.body_xpos[body].round(5).tolist(),
-            "quaternion_wxyz": env.sim.data.body_xquat[body].round(5).tolist(),
+            "xyz": frame.to_robot(env.sim.data.body_xpos[body]).round(5).tolist(),
+            "quaternion_wxyz": quaternion.round(5).tolist(),
             "joints": {
-                name: np.asarray(env.sim.data.get_joint_qpos(name)).round(5).tolist()
+                name: joint_state(name)
                 for name in item.joints
             },
+            "joint_coordinates": "free joints: episode_robot xyz + wxyz; other joints: local joint coordinates",
         }
         if getattr(item, "size", None) is not None:
             result["size"] = np.asarray(item.size).round(5).tolist()
+            result["size_frame"] = "item local axes; meters"
         return result
 
     objects = {name: state(item) for name, item in env.objects.items()}
     for name in objects:
         objects[name]["description"] = env.get_obj_lang(name)
     return {
-        "coordinate_frame": "MuJoCo world; meters; +z up; quaternion order wxyz",
-        "tip_xyz": env.sim.data.site_xpos[site].round(5).tolist(),
+        "coordinate_frame": frame.description + " Quaternion order wxyz.",
+        "tip_xyz": frame.to_robot(env.sim.data.site_xpos[site]).round(5).tolist(),
         "robot_qpos": env.robots[0]._joint_positions.round(5).tolist(),
         "objects": objects,
         "fixtures": {name: state(item) for name, item in env.fixtures.items()},
@@ -198,14 +338,14 @@ def task_state(env, instruction):
     }
 
 
-def vision_state(env, site):
+def vision_state(env, site, frame):
     # Explicit allowlist: no object/fixture poses, dimensions, contacts or task metrics.
     return {
         "input_mode": "vision",
-        "coordinate_frame": "MuJoCo world; meters; +z up",
-        "tip_xyz": env.sim.data.site_xpos[site].round(5).tolist(),
+        "coordinate_frame": frame.description,
+        "tip_xyz": frame.to_robot(env.sim.data.site_xpos[site]).round(5).tolist(),
         "robot_qpos": env.robots[0]._joint_positions.round(5).tolist(),
-        "tip_rotation_matrix": env.sim.data.site_xmat[site].reshape(3, 3).round(5).tolist(),
+        "tip_rotation_matrix": frame.orientation(env.sim.data.site_xmat[site]).round(5).tolist(),
     }
 
 
@@ -242,17 +382,34 @@ def choose_position(observation, mock, target, images=None, log=None, call=None)
             input=[
                 {"role": "system", "content": (
                     "You are controlling a PandaOmron robot arm in a RoboCasa kitchen. "
-                    "Each observation message gives you the current proprioceptive state and camera images. "
+                    "Each observation gives proprioception and either numerical scene state or three camera images. "
                     "Work toward the user's goal in small, deliberate motions; re-check the observation after every motion. "
-                    "Respond only with a JSON object matching the provided schema: an absolute world-frame XYZ waypoint in meters (x, y, z), "
+                    "Respond only with a JSON object matching the provided schema: an absolute episode-robot-frame XYZ waypoint in meters (x, y, z), "
                     "a gripper command (open or close), and a `note`. Do not write any text outside the JSON object. "
                     "In the `note`, in one or two sentences, say what you observe in the current observation and why you chose this motion. "
                     "The user is watching these notes to see what you see and what you decide, so write them for a human reader. "
                     # "Use the supplied observations. In vision mode infer object/fixture locations "
                     # "from the three labeled RGB views; numerical values describe only your robot. "
                     # "Metric depth is uncertain: choose small exploratory waypoints and reobserve. "
-                    "Note that +z is up. "
-                    "Orientation, torso and base are held by the local controller. "
+                    "Embodiment: one 7-DoF Panda arm on an Omron mobile base, with a parallel-jaw gripper. "
+                    "The coordinate origin is the Panda arm mounting base after initialization, not the floor. "
+                    "+X is forward out of the robot, +Y is the robot's left, +Z is up. "
+                    "This frame is frozen for the episode; these are not image-left/right directions. "
+                    "XYZ controls the grasp point between the fingers. Targets are absolute positions, not displacements. "
+                    "Wrist orientation stays fixed at its starting orientation; you control only XYZ and open/close. "
+                    "The controller does not intentionally drive the base or torso, but small physical drift is possible. "
+                    "Camera overlays show +X red, +Y green, +Z blue: 15cm arrows at the mount, "
+                    "and a parallel 10cm copy at the current grasp point labeled tip. The tip copy is not the coordinate origin. "
+                    "These virtual rulers may be hidden by the image boundary and are drawn over scene objects. "
+                    "IK converts targets to joint motion; unreachable targets are rejected and contacts may block motion. "
+                    "Use modest steps and the measured result, rather than assuming every target was reached. "
+                    "recent_actions contains up to five previous actions, oldest first, with targets, gripper commands, "
+                    "requested versus measured XYZ displacement, progress fraction along the requested direction, "
+                    "tracking error, and status in the episode robot frame. "
+                    "Only the latest two actions retain your notes to keep the context concise. "
+                    "Use this history to assess progress and change your approach when movements repeatedly fail. "
+                    "Target not reached means motion may be obstructed or there may be another cause; "
+                    "tracking error alone does not prove contact. Do not simply repeat blocked movements. "
                     "Follow the user provided instruction to complete each task. "
                     "When provided, use fixture_roles to identify the task's named fixtures. "
                     "If the task requires placing, after placing, open the gripper and retreat so the environment can check completion. "
@@ -332,6 +489,40 @@ class Arm:
         self.env.step(action)
 
 
+def test_axes(arm, frame, cameras, log):
+    """Offline integration check through the same transform, IK and controller."""
+    home = arm.xyz.copy()
+    for axis in range(3):
+        for sign in (1, -1):
+            before = arm.xyz
+            delta = np.eye(3)[axis] * sign * 0.03
+            target = frame.to_world(frame.to_robot(before) + delta)
+            goal = arm.solve(target)
+            for _ in range(160):
+                arm.step(goal)
+                views = cameras.capture()
+                log.frame(views)
+                cameras.update(views)
+            actual_delta = arm.xyz - before
+            expected_delta = frame.rotation @ delta
+            error = float(np.linalg.norm(actual_delta - expected_delta))
+            label = f"{'+' if sign > 0 else '-'}{'XYZ'[axis]}"
+            result = {"axis": label, "expected_world_delta": expected_delta.tolist(),
+                      "actual_world_delta": actual_delta.tolist(), "error_m": error}
+            log.event("Axis test", result)
+            print(f"{label} 3cm: expected world {expected_delta.round(5)}, "
+                  f"measured {actual_delta.round(5)}; error {error:.4f} m", flush=True)
+            if error > 0.005:
+                raise RuntimeError(f"Axis test {label} exceeded 5mm error; check reachability or contact.")
+            goal = arm.solve(home)
+            for _ in range(160):
+                arm.step(goal)
+                views = cameras.capture()
+                log.frame(views)
+                cameras.update(views)
+    log.event("Success", {"axis_test": "All six 3cm movements tracked within 5mm"})
+
+
 def run(args):
     if args.list_tasks:
         from robocasa.environments import ALL_KITCHEN_ENVIRONMENTS
@@ -350,7 +541,7 @@ def run(args):
         args.max_calls = 30 if args.task else (12 if args.pickup else 5)
     if args.max_calls < 1:
         raise ValueError("--max-calls must be positive")
-    if not (args.mock or args.inspect) and not os.environ.get("OPENAI_API_KEY"):
+    if not (args.mock or args.inspect or args.test_axes) and not os.environ.get("OPENAI_API_KEY"):
         raise SystemExit("Set OPENAI_API_KEY, or run --mock / --inspect without API calls.")
     print(f"Loading RoboCasa365 {args.env} (first load may take a while)...", flush=True)
     load_started = time.monotonic()
@@ -367,14 +558,20 @@ def run(args):
         for _ in range(20):
             arm.step(arm.hold.copy())
         arm.rotation = arm.data.site_xmat[arm.site].reshape(3, 3).copy()
+        frame = RobotFrame(env)
+        log.event("Coordinate frame", {"name": "episode_robot", "mount_body": frame.body_name,
+                    "origin_world_xyz": frame.origin.tolist(), "rotation_robot_to_world": frame.rotation.tolist()})
         task_instruction = env.get_ep_meta()["lang"] if args.task else None
         if args.task and not task_instruction.strip():
             raise ValueError(f"{args.task} did not provide a task instruction")
         display_cameras = not args.headless and not args.no_camera_views and not args.inspect
-        cameras = CameraViews(env, display=display_cameras)
+        cameras = CameraViews(env, frame, display=display_cameras)
         log.frame(cameras.capture())
+        if args.test_axes:
+            test_axes(arm, frame, cameras, log)
+            return
         if args.inspect:
-            state = vision_state(env, arm.site) if args.vision else scene_state(env, arm.site)
+            state = vision_state(env, arm.site, frame) if args.vision else scene_state(env, arm.site, frame)
             if args.task:
                 state["robocasa_task"] = ({"name": args.task, "instruction": task_instruction}
                                           if args.vision else task_state(env, task_instruction))
@@ -394,7 +591,7 @@ def run(args):
             instruction = f"Move the tip to the cabinet" # 0.20 m above the root-body origin of object '{args.object}'."
         else:
             target = arm.xyz + [0, 0, 0.05]
-            instruction = f"Move the tip to world XYZ {target.tolist()} (5 cm above its initial position)."
+            instruction = f"Move the tip to episode_robot XYZ {frame.to_robot(target).tolist()} (5 cm above its initial position)."
         if args.pickup:
             instruction = (f"Pick up object '{args.object}' and hold it at least 0.08 m above "
                            "its initial height. Approach, descend, close, then lift. Do not release.")
@@ -416,6 +613,7 @@ def run(args):
         if args.vision and args.mock:
             print("Vision mock holds position: camera/API wiring test, not a visual policy.", flush=True)
         feedback, future, moving = "Initial state", None, False
+        recent_actions = deque(maxlen=5)
         goal, calls, motion_steps, stable = arm.hold.copy(), 0, 0, 0
         mock_phase, lift_stable = 0, 0
         while True:
@@ -428,8 +626,9 @@ def run(args):
                 if calls >= args.max_calls:
                     result = f"RoboCasa {args.task} success=False. " if args.task else ""
                     raise RuntimeError(f"{result}Action budget exhausted: {feedback}")
-                observation = vision_state(env, arm.site) if args.vision else scene_state(env, arm.site)
-                observation.update(instruction=instruction, last_action_result=feedback)
+                observation = vision_state(env, arm.site, frame) if args.vision else scene_state(env, arm.site, frame)
+                observation.update(instruction=instruction,
+                                   recent_actions=prompt_history(recent_actions))
                 if args.task:
                     observation["robocasa_task"] = ({"name": args.task, "instruction": task_instruction}
                                                    if args.vision else task_state(env, task_instruction))
@@ -440,7 +639,7 @@ def run(args):
                 }
                 if args.pickup and not args.vision:
                     observation["pickup"] = {
-                        "object": args.object, "initial_object_xyz": initial_object_xyz.tolist(),
+                        "object": args.object, "initial_object_xyz": frame.to_robot(initial_object_xyz).tolist(),
                         "grasped": bool(env._check_grasp(arm.robot.gripper["right"], env.objects[args.object])),
                         "lift_m": float(env.sim.data.body_xpos[body, 2] - initial_object_xyz[2]),
                     }
@@ -453,27 +652,34 @@ def run(args):
                       f"{len(observation['objects'])} objects, {len(observation['fixtures'])} fixtures"), flush=True)
                 if args.mock:
                     log.event("Mock input", {"observation": observation}, calls + 1)
-                future = pool.submit(choose_position, observation, args.mock, target, images, log, calls + 1)
+                future = pool.submit(choose_position, observation, args.mock, frame.to_robot(target), images, log, calls + 1)
                 calls += 1
             if future is not None and future.done():
                 command = future.result()
                 if args.mock:
                     log.event("Mock output", {"action": command.model_dump()}, calls)
-                waypoint = np.array([command.x, command.y, command.z])
+                robot_waypoint = np.array([command.x, command.y, command.z])
+                waypoint = frame.to_world(robot_waypoint)
+                action_start = frame.to_robot(arm.xyz)
                 future = None
                 if command.note:
                     print(f"Note: {command.note}", flush=True)
                 try:
+                    if not np.isfinite(waypoint).all():
+                        raise ValueError("Waypoint must be finite")
                     goal = arm.solve(waypoint)
                     arm.gripper = command.gripper
                     moving, motion_steps, stable = True, 0, 0
-                    print(f"XYZ {waypoint.round(4)}, gripper={arm.gripper} -> IK joints {goal.round(3)}", flush=True)
+                    print(f"Robot XYZ {robot_waypoint.round(4)} -> world XYZ {waypoint.round(4)}, gripper={arm.gripper} -> IK joints {goal.round(3)}", flush=True)
                     log.event("Action accepted", {"action": command.model_dump(), "ik_joints": goal.tolist(),
-                                                   "simulation_steps": 160}, calls)
+                                                   "simulation_steps": 160, "coordinate_frame": "episode_robot",
+                                                   "world_target_xyz": waypoint.tolist()}, calls)
                 except ValueError as error:
-                    feedback = f"Rejected waypoint {waypoint.tolist()}: {error}"
+                    feedback = f"Rejected episode_robot waypoint {robot_waypoint.tolist()}: {error}"
+                    summary = action_result(calls, command, action_start, frame.to_robot(arm.xyz), str(error))
+                    recent_actions.append(summary)
                     print(feedback, flush=True)
-                    log.event("Action rejected", {"reason": feedback}, calls)
+                    log.event("Action rejected", {"reason": feedback, "action_summary": summary}, calls)
             # Freeze physics during API waits; render the unchanged scene below.
             if moving:
                 arm.step(goal)
@@ -504,23 +710,30 @@ def run(args):
                 # Each accepted action gets exactly 8 simulated seconds at 20 Hz.
                 if motion_steps >= 160:
                     moving = False
-                    feedback = (f"Actual tip {arm.xyz.tolist()}; waypoint error {waypoint_error:.4f} m; "
+                    feedback = (f"Actual tip (episode_robot) {frame.to_robot(arm.xyz).tolist()}; waypoint error {waypoint_error:.4f} m; "
                                 f"task target error {error:.4f} m")
                     if args.task:
-                        feedback = (f"Actual tip {arm.xyz.tolist()}; waypoint error {waypoint_error:.4f} m; "
+                        feedback = (f"Actual tip (episode_robot) {frame.to_robot(arm.xyz).tolist()}; waypoint error {waypoint_error:.4f} m; "
                                     f"gripper={arm.gripper}; RoboCasa success={bool(env._check_success())}")
                     if args.pickup:
-                        feedback = (f"Actual tip {arm.xyz.tolist()}; waypoint error {waypoint_error:.4f} m; "
+                        feedback = (f"Actual tip (episode_robot) {frame.to_robot(arm.xyz).tolist()}; waypoint error {waypoint_error:.4f} m; "
                                     f"gripper={arm.gripper}; grasped={grasped}; object lift={lift:.4f} m")
                         if args.mock and stable >= 10:
                             phase_target = initial_object_xyz + [0, 0, MOCK_PICKUP_Z[min(mock_phase, 3)]]
                             if np.linalg.norm(arm.xyz - phase_target) < 0.01:
                                 mock_phase += 1
                     if args.vision:
-                        feedback = (f"Actual tip {arm.xyz.tolist()}; waypoint error {waypoint_error:.4f} m; "
+                        feedback = (f"Actual tip (episode_robot) {frame.to_robot(arm.xyz).tolist()}; waypoint error {waypoint_error:.4f} m; "
                                     f"gripper command={arm.gripper}. Inspect the new images to assess progress.")
+                    summary = action_result(calls, command, action_start, frame.to_robot(arm.xyz))
+                    recent_actions.append(summary)
+                    feedback += (f" Requested displacement {summary['requested_displacement_xyz']} m; "
+                                 f"measured displacement {summary['measured_displacement_xyz']} m "
+                                 f"(episode_robot). {summary['result']}")
                     print(feedback, flush=True)
-                    log.event("Action result", {"feedback": feedback}, calls)
+                    log.event("Action result", {"feedback": feedback, "tip_robot_xyz": frame.to_robot(arm.xyz).tolist(),
+                                               "tip_world_xyz": arm.xyz.tolist(), "waypoint_error_m": waypoint_error,
+                                               "action_summary": summary}, calls)
                     if not args.task and not args.pickup and error < 0.01 and stable >= 10:
                         print("SUCCESS: reaching objective achieved (not the kitchen pick/place task).", flush=True)
                         log.event("Success", {"reaching_error_m": error}, calls)
@@ -552,6 +765,7 @@ if __name__ == "__main__":
     parser.add_argument("--vision", action="store_true", help="Send three RGB cameras plus robot proprioception instead of world object state")
     parser.add_argument("--no-camera-views", action="store_true", help="Disable the three-view browser display")
     parser.add_argument("--inspect", action="store_true", help="Print numerical observation and exit")
+    parser.add_argument("--test-axes", action="store_true", help="Test +/-3cm on each robot axis without Astra; record results and video")
     parser.add_argument("--object", help="Object name for the custom reaching goal or --pickup")
     parser.add_argument("--instruction", help="Override the goal sent to Astra; existing success checks still apply")
     parser.add_argument("--pickup", action="store_true", help="Pick up --object (default: obj) and hold it lifted")

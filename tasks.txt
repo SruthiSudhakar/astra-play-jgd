@@ -1,374 +1,374 @@
 WARNING: mimicgen environments not imported since mimicgen is not installed!
-AddIceCubes
-AddLemonToFish
-AddMarshmallow
-AddSugarCubes
-AddSweetener
-AddToSoupPot
-AdjustHeat
-AdjustToasterOvenTemperature
-AdjustWaterTemperature
-AfterwashSorting
-AirDryFruit
-AlcoholServingPrep
-AlignSilverware
-ArrangeBreadBasket
-ArrangeBreadBowl
-ArrangeBuffetDessert
-ArrangeCuttingFruits
-ArrangeDrinkware
-ArrangeSinkSanitization
-ArrangeTea
-ArrangeTeaAccompaniments
-ArrangeUtensilsByType
-ArrangeVegetables
-AssembleCookingArray
-BalancedMealPrep
-BeginSlowCooking
-BeverageOrganization
-BeverageSorting
-BlendIngredients
-BlendMarinade
-BlendSalsaMix
-BlendVegetableSauce
-BoilCorn
-BoilEggs
-BoilPot
-BowlAndCup
-BreadAndCheese
-BreadSelection
-BreadSetupSlicing
-BuildAppetizerPlate
-ButterOnPan
-CandleCleanup
-CategorizeCondiments
-CerealAndBowl
-CheeseMixing
-CheesyBread
-ChooseMeasuringCup
-ChooseRipeFruit
-CleanBlenderJug
-CleanBoard
-CleanMicrowave
-ClearClutter
-ClearCuttingBoard
-ClearFoodWaste
-ClearFreezer
-ClearReceptaclesForCleaning
-ClearSink
-ClearSinkArea
-ClearSinkSpace
-CloseBlenderLid
-CloseCabinet
-CloseDishwasher
-CloseDrawer
-CloseDropDownDoor
-CloseElectricKettleLid
-CloseFridge
-CloseFridgeDrawer
-CloseMicrowave
-CloseOven
-CloseStandMixerHead
-CloseToasterOvenDoor
-ClusterItemsForClearing
-ClusterUtensilsInDrawer
-CoffeeServeMug
-CoffeeSetupMug
-CollectWashingSupplies
-ColorfulSalsa
-CondimentCollection
-CookieDoughPrep
-CoolBakedCake
-CoolBakedCookies
-CoolKettle
-CountertopCleanup
-CreateChildFriendlyFridge
-CupcakeCleanup
-CutBuffetPizza
-CuttingToolSelection
-DateNight
-DefrostByCategory
-DeliverBrewedCoffee
-DeliverStraw
-DessertAssembly
-DessertUpgrade
-DisplayMeatVariety
-DistributeChicken
-DistributeSteakOnPans
-DivideBasins
-DivideBuffetTrays
-DrainVeggies
-DrawerUtensilSort
-DrinkwareConsolidation
-DryDishes
-DryDrinkware
-DumpLeftovers
-EmptyDishRack
-FillBlenderJug
-FillKettle
-FilterMicrowavableItem
-FoodCleanup
-FreezeBottledWaters
-FreezeCookedFood
-FreezeIceTray
-FreshProduceOrganization
-FryingPanAdjustment
-GarnishCake
-GarnishCupcake
-GarnishPancake
-GatherCuttingTools
-GatherMarinadeIngredients
-GatherProduceWashing
-GatherTableware
-GatherVegetables
-GetToastedBread
-HeatKebabSandwich
-HeatMug
-HeatMultipleWater
-HotDogSetup
-JuiceFruitReamer
-KettleBoiling
-LemonSeasoningFish
-LineUpCondiments
-LoadCondimentsInFridge
-LoadDishwasher
-LoadFridgeByType
-LoadFridgeFifo
-LoadPreparedFood
-LowerHeat
-MakeBananaMilkshake
-MakeCheesecakeFilling
-MakeChocolateMilk
-MakeFruitBowl
-MakeIceLemonade
-MakeIcedCoffee
-MakeLoadedPotato
-ManipulateDrawer
-ManipulateLowerDoor
-ManipulateSinkFaucet
-ManipulateStoveKnob
-MatchCupAndDrink
-MaximizeFreezerSpace
-MealPrepStaging
-MeatSkewerAssembly
-MeatTransfer
-MicrowaveCorrectMeal
-MicrowaveDefrostMeat
-MicrowavePressButton
-MicrowaveThawing
-MicrowaveThawingFridge
-MixCakeFrosting
-MixedFruitPlatter
-MoveFreezerToFridge
-MoveFridgeToFreezer
-MoveToCounter
-MoveToFreezerDrawer
-MultistepSteaming
-NavigateKitchen
-OpenBlenderLid
-OpenCabinet
-OpenDishwasher
-OpenDrawer
-OpenDropDownDoor
-OpenElectricKettleLid
-OpenFridge
-OpenFridgeDrawer
-OpenMicrowave
-OpenOven
-OpenStandMixerHead
-OpenToasterOvenDoor
-OrganizeBakingIngredients
-OrganizeCleaningSupplies
-OrganizeCoffeeCondiments
-OrganizeCondiments
-OrganizeMeasuringCups
-OrganizeMetallicUtensils
-OrganizeMugsByHandle
-OrganizeVegetables
-OvenBroilFish
-PJSandwichPrep
-PackDessert
-PackFoodByTemp
-PackFruitContainer
-PackIdenticalLunches
-PackSnack
-PanTransfer
-PastryDisplay
-PickPlaceCabinetToCounter
-PickPlaceCoffee
-PickPlaceCounterToBlender
-PickPlaceCounterToCabinet
-PickPlaceCounterToDrawer
-PickPlaceCounterToMicrowave
-PickPlaceCounterToOven
-PickPlaceCounterToSink
-PickPlaceCounterToStandMixer
-PickPlaceCounterToStove
-PickPlaceCounterToToasterOven
-PickPlaceDrawerToCounter
-PickPlaceFridgeDrawerToShelf
-PickPlaceFridgeShelfToDrawer
-PickPlaceMicrowaveToCounter
-PickPlaceSinkToCounter
-PickPlaceStoveToCounter
-PickPlaceToasterOvenToCounter
-PickPlaceToasterToCounter
-PlaceBeveragesTogether
-PlaceBreakfastItemsAway
-PlaceDishesBySink
-PlaceEqualIceCubes
-PlaceFoodInBowls
-PlaceIceInCup
-PlaceLidToBoil
-PlaceMeatInMarinade
-PlaceMicrowaveSafeItem
-PlaceOnDishRack
-PlaceStraw
-PlaceVegetablesEvenly
-PlaceVeggiesInDrawer
-PlateSteakMeal
-PlateStoreDinner
-PortionFruitBowl
-PortionHotDogs
-PortionInTupperware
-PortionOnSize
-PortionYogurt
-PreRinseStation
-PreSoakPan
-PreheatOven
-PreheatPot
-PrepForSanitizing
-PrepForTenderizing
-PrepFridgeForCleaning
-PrepMarinatingMeat
-PrepSinkForCleaning
-PrepareBroilingStation
-PrepareCheeseStation
-PrepareCocktailStation
-PrepareCoffee
-PrepareDishwasher
-PrepareDrinkStation
-PrepareSandwichStation
-PrepareSausageCheese
-PrepareSmoothie
-PrepareSoupServing
-PrepareStoringLeftovers
-PrepareToast
-PrepareVegetableRoasting
-PrepareVeggieDip
-PrepareVeggiesForSteaming
-PressChicken
-PrewashFoodAssembly
-PrewashFoodSorting
-QuickThaw
-RearrangeFridgeItems
-RecycleBottlesBySize
-RecycleBottlesByType
-RecycleSodaCans
-RecycleStackedYogurt
-RefillCondimentStation
-ReheatMeal
-ReheatMeatOnStove
-RemoveBroiledFish
-RemoveCuttingBoardItems
-RemoveSteamedVegetables
-ReorganizeFrozenVegetables
-ResetCabinetDoors
-RestockBowls
-RestockCannedFood
-RestockPantry
-RestockSinkSupplies
-RetrieveIceTray
-RetrieveMeat
-ReturnHeatedFood
-ReturnWashingSupplies
-RinseBowls
-RinseCuttingBoard
-RinseFragileItem
-RinseSinkBasin
-RotatePan
-SanitizePrepCuttingBoard
-SanitizeSink
-ScalePortioning
-ScrubBowl
-ScrubCuttingBoard
-SearingMeat
-SeasoningSpiceSetup
-SeasoningSteak
-SeparateFreezerRack
-SeparateRawIngredients
-ServeMealJuice
-ServeSteak
-ServeTea
-ServeWarmCroissant
-SetBowlsForSoup
-SetUpCuttingStation
-SetUpSpiceStation
-SetupBowls
-SetupButterPlate
-SetupFruitBowl
-SetupFrying
-SetupSodaBowl
-SetupWineGlasses
-ShakePan
-SimmeringSauce
-SizeSorting
-SlideDishwasherRack
-SlideOvenRack
-SlideToasterOvenRack
-SnackSorting
-SoakSponge
-SortBreakfastIngredients
-SortingCleanup
-SpicyMarinade
-StackBowlsCabinet
-StackBowlsInSink
-StackCans
-StartCoffeeMachine
-StartElectricKettle
-SteamFish
-SteamInMicrowave
-SteamVeggiesWithWater
-StirVegetables
-StockingBreakfastFoods
-StopSlowCooking
-StoreDumplings
-StoreLeftoversByType
-StoreLeftoversInBowl
-StrainerSetup
-SweetSavoryToastSetup
-SweetenCoffee
-SweetenHotChocolate
-ThawInSink
-TiltPan
-ToastBagel
-ToastBaguette
-ToastHeatableIngredients
-ToastOnCorrectRack
-ToastOneSlotPair
-ToasterOvenBroilFish
-TongBuffetSetup
-TransportCookware
-TurnOffMicrowave
-TurnOffSimmeredSauceHeat
-TurnOffSinkFaucet
-TurnOffStove
-TurnOnBlender
-TurnOnElectricKettle
-TurnOnMicrowave
-TurnOnSinkFaucet
-TurnOnStove
-TurnOnToaster
-TurnOnToasterOven
-TurnSinkSpout
-UtensilShuffle
-VeggieDipPrep
-WaffleReheat
-WarmCroissant
-WashFish
-WashFruitColander
-WashInSaucepan
-WashLettuce
-WeighIngredients
-WipeTable
-YogurtDelightPrep
+AddIceCubes: Put the *two/three* ice cubes in the blender.
+AddLemonToFish: Take the lemon from the fridge and place it on the plate with fish on the dining counter.
+AddMarshmallow: Pick up the marshmallow and place it in the cup of hot chocolate on the dining counter.
+AddSugarCubes: Take the two sugar cubes and place them on the plate with the cake.
+AddSweetener: Put the *two/three* sugar cubes in the blender.
+AddToSoupPot: Remove the lid from the simmering saucepan and add the [*vegetables*] from the plate to the saucepan. Then place the lid back to continue slow cooking the soup.
+AdjustHeat: Put the [*vegetables*] in the pan. Then turn on the [*burner location*] burner and set the heat to medium.
+AdjustToasterOvenTemperature: {Increase/Decrease} the toaster oven temperature.
+AdjustWaterTemperature: The water running in the sink is {hot/cold}. Adjust the faucet handle to run the water {cold/hot}. Make sure to keep the water on.
+AfterwashSorting: Pick the [*vegetable1*] from the sink and place them in one bowl. Place the [*vegetable2*] in the other bowl. Then turn off the sink faucet.
+AirDryFruit: Pick the [*fruit*] from the sink and place it on the cutting board to airdry. Then turn off the sink faucet.
+AlcoholServingPrep: Open the cabinet directly in front. Then move the [*alcohol*] and the [*cup*] to the dining counter with the [*decoration*] on it.
+AlignSilverware: Take the fork and place it on the left side of the plate. Then take the spoon and place it on the right side of the plate. Make sure they're directly next to the plate.
+ArrangeBreadBasket: Open the cabinet, pick up the [*bread*] from the cabinet and place it in the basket. Then move the basket to the dining counter.
+ArrangeBreadBowl: Pick up the heated [*bread*] from the toaster oven and place it in the bowl. Then move the bread bowl to the dining counter.
+ArrangeBuffetDessert: Take the [*sweets*] from the fridge and place them on the empty tray on the dining counter.
+ArrangeCuttingFruits: Place the fruits in the fridge on the cutting board by the sink to make a fruit bowl. Leave the non-fruit items in the fridge.
+ArrangeDrinkware: Place the pitcher and cup on the dining counter for serving.
+ArrangeSinkSanitization: Place the sponge and dishbrush next to the sink on the counter.
+ArrangeTea: Pick the kettle from the counter and place it on the tray. Then pick the mug from the cabinet and place it on the tray. Then close the cabinet doors.
+ArrangeTeaAccompaniments: Take out the milk from the fridge and place it on the tray on the counter. Then take the sugar cube near the tray and place it in the tray.
+ArrangeUtensilsByType: Organize the utensils by type. Pick up the wooden spoons from the counter and place them in the open cabinet. Then pick up the metallic utensils from the counter and place them in the open drawer.
+ArrangeVegetables: Pick the vegetables from the sink and place them on the cutting board.
+AssembleCookingArray: Move the [*meat*] onto the pan on the stove. Then move the [*condiment*] and [*vegetable*] from the cabinet to the counter where the plate is.
+BalancedMealPrep: Place the [*meat*] on the plate and place the [*vegetable*] on the same plate.
+BeginSlowCooking: Set the burner covering the saucepan with broth to low heat, and place the lid on the saucepan to begin slow cooking.
+BeverageOrganization: Move the drinks to the dining counter.
+BeverageSorting: Sort all alcoholic drinks to one cabinet, and non-alcoholic drinks to the other.
+BlendIngredients: Open the blender lid, put the fruit in the blender, close the lid, and start the blender.
+BlendMarinade: Grab the [*vegetables*] from the fridge, place them in the blender, close the lid, and turn on the blender to create a marinade.
+BlendSalsaMix: Open the blender lid and place the tomato, chili pepper, and onion in the blender. Then place the lid back on and press the power button to make salsa.
+BlendVegetableSauce: The [*vegetable*] is done being boiled. Turn off the stove burner for the saucepan. Place the [*vegetable*] in the blender and turn on the blender to make a vegetable sauce.
+BoilCorn: Place both pieces of corn from the plate into the saucepan. Then place the lid on the saucepan to start boiling the corn.
+BoilEggs: Place both eggs from the plate into the saucepan with boiling water.
+BoilPot: Take the pot filled with water and place it on the stove. Then turn on the stove burner to begin boiling the water.
+BowlAndCup: Place the cup inside the bowl on the dining table and move the bowl to any counter.
+BreadAndCheese: Place the bread and cheese on the cutting board.
+BreadSelection: From the different types of pastries on the counter, select a croissant and place it on the cutting board. Then retrieve a jar of jam from the cabinet and place it alongside the croissant on the cutting board.
+BreadSetupSlicing: Place all breads on the cutting board.
+BuildAppetizerPlate: Take the [*cheese*], [*meat*], and [*vegetable*] from the fridge and place them on the plate on the dining counter to create an appetizer plate.
+ButterOnPan: Pick up the butter stick and place it in the pan. Then turn on the burner for the pan.
+CandleCleanup: Pick the [*decorations*] from the dining table and place them in the open cabinet. Close the cabinet after placing the objects.
+CategorizeCondiments: Put the shaker and condiment bottle from the counter next to their counterparts in the cabinet.
+CerealAndBowl: Open the cabinet. Pick the cereal and bowl from the cabinet and place them on the counter next to the milk. Then close the cabinet.
+CheeseMixing: Put the cheese in the pot filled with milk and stir.
+CheesyBread: Pick up the wedge of cheese and place it on the slice of bread to prepare a simple cheese on bread dish.
+ChooseMeasuringCup: Open the *left/right* drawer and place the *larger/smaller* measuring cup on the counter.
+ChooseRipeFruit: Put the non-rotten fruit in the blender.
+CleanBlenderJug: Take the blender jug and place it in the sink to prepare it for cleaning.
+CleanBoard: Move the cutting board and knife to the sink. Then move spray from the cabinet to the counter.
+CleanMicrowave: Place the sponge inside the microwave to prepare for sanitizing.
+ClearClutter: Pick up all produce items and place them in the sink. Turn on the sink faucet to wash them. Then turn the sink off and put them in the tray.
+ClearCuttingBoard: Clear the non-vegetable object off the cutting board and place the vegetables onto it.
+ClearFoodWaste: Move the food items out of the sink and into the colander.
+ClearFreezer: Take the [*food items*] from the freezer and place them in the bowl on the counter.
+ClearReceptaclesForCleaning: Pick the [*tableware*] and place them in the sink. Then turn on the water.
+ClearSink: Remove the [*food items*] from the sink. Then move the [*dishes*] from the counter to the sink for washing.
+ClearSinkArea: Clear the mugs and bowl far away from the sink.
+ClearSinkSpace: Pick the objects in the sink and place them on the counter to clear sink space for washing produce.
+CloseBlenderLid: Close the lid blender by securely placing the lid on top.
+CloseCabinet: Close the cabinet door(s).
+CloseDishwasher: Close the dishwasher door.
+CloseDrawer: Close the {left/right} drawer.
+CloseDropDownDoor: Close the {oven/dishwasher} drop-down door.
+CloseElectricKettleLid: Close the lid of the electric kettle.
+CloseFridge: Close the fridge door(s).
+CloseFridgeDrawer: Fully close the fridge drawer.
+CloseMicrowave: Close the microwave door.
+CloseOven: Close the oven door.
+CloseStandMixerHead: Close the stand mixer head.
+CloseToasterOvenDoor: Close the toaster oven door.
+ClusterItemsForClearing: Move the [*tableware1*] to cluster with the [*tableware2*] on the dining counter for efficient clearing.
+ClusterUtensilsInDrawer: Pick up the fork from the counter and place it on the *left/right* side of the drawer. Then, pick up the spoon from the counter and place it on the *right/left* side of the drawer. Make sure that the utensils are clustered by type.
+CoffeeServeMug: Pick the mug from under the coffee machine dispenser and place it on the counter.
+CoffeeSetupMug: Pick the mug from the counter and place it under the coffee machine dispenser.
+CollectWashingSupplies: Locate and retrieve the [*cleaning items*] from the cabinet. Place them next to the sink.
+ColorfulSalsa: Place the avocado, onion, tomato, and bell pepper on the cutting board.
+CondimentCollection: Pick the [*condiments*] from the counter and place them in the cabinet.
+CookieDoughPrep: Pick the egg and butter from the fridge and place them by the bowl for mixing.
+CoolBakedCake: Take the baked cake out of the oven and place it on the plate for cooling. Then close the oven door.
+CoolBakedCookies: Open the oven door and slide the top rack out. Then take the tray with baked cookies out of the oven and place it on the counter for cooling.
+CoolKettle: The kettle is done boiling. Turn off the stove, then wait for 300 timesteps before moving the kettle to the dining table.
+CountertopCleanup: Clean up the countertop by placing items away. Place the [*utensil*] in the open drawer. Place the [*tableware*] in the open cabinet. Place the bowl with the [*food*] in the fridge.
+CreateChildFriendlyFridge: Place the alcohol on the top shelf of the fridge to keep out of children's reach, and place the snack(s) on lower shelves for easy access.
+CupcakeCleanup: Move the fresh-baked cupcake off the tray onto the counter, and place the bowl used for mixing into the sink.
+CutBuffetPizza: Take the pizza cutter from the drawer on the *left/right* and place it on the dining counter for cutting.
+CuttingToolSelection: Place the appropriate cutting tool for cutting the [*fruit/vegetable*] skin on the cutting board.
+DateNight: Get the [*decoration*] and the [*alcohol*] from the cabinet and move them to the dining counter.
+DefrostByCategory: There is a mixed pile of frozen fruits and vegetables on the counter. Locate all the frozen vegetables and place the items in a bowl on the counter. Take all the frozen fruits and defrost them in a running sink.
+DeliverBrewedCoffee: Pick up the brewed coffee from the coffee machine and place it next to the breakfast plate on the dining counter.
+DeliverStraw: Take a straw from the drawer in front and place it inside the glass cup on the dining counter.
+DessertAssembly: Place the [*container*] with [*dessert*] and the cupcake onto the tray.
+DessertUpgrade: Move the dessert items from the plates to the tray.
+DisplayMeatVariety: Retrieve the chicken, shrimp, and steak from the fridge and place them on the serving tray on the dining counter.
+DistributeChicken: Take the chicken drumsticks from the pan and place one on each plate on the dining counter.
+DistributeSteakOnPans: Turn on the stove burner for the empty pan. Then move one steak from the full pan to the empty pan to achieve better heat distribution and more room for maneuverability.
+DivideBasins: Move any existing items from the left basin to the right basin for drying. Then move the [*washing item*] from the counter to the left basin of the sink for washing.
+DivideBuffetTrays: Gather the [*vegetables*] from the fridge and place them on a tray on the dining counter. Then gather the [*meats*] from the fridge and place them on the other tray.
+DrainVeggies: Dump the [*vegetable*] from the pot into the sink. Then turn on the water and wash the [*vegetable*]. Then turn off the water and put the [*vegetable*] back in the pot.
+DrawerUtensilSort: Open the *left/right* drawer and place the utensils inside it.
+DrinkwareConsolidation: Pick the [*drinkware*] from the counter and place them in the open cabinet.
+DryDishes: Pick the cup and bowl from the sink and place them on the counter for drying.
+DryDrinkware: Pick up the mug and place it upside down in the open cabinet.
+DumpLeftovers: Dump the [*leftovers*] from the bowl so the bowl can be washed. Place the bowl in the sink after clearing the leftovers.
+EmptyDishRack: Pick up the mug from the dish rack and place it inside the open cabinet where all mugs go. Then close the cabinet door(s).
+FillBlenderJug: Turn on the sink faucet and place the jug under the water for a few seconds to fill it up.
+FillKettle: Open the cabinet, pick the kettle from the cabinet, and place it in the sink.
+FilterMicrowavableItem: Remove the [*fruit*] from the bowl and place it on the small plate. Then place the bowl with only the [*meat*] in the microwave, close the door, and press the start button to microwave the [*meat*].
+FoodCleanup: Pick the [*food items*] from the counter and place them in the cabinet. Then close the cabinet.
+FreezeBottledWaters: Take the bottled waters from the counter and place them in the freezer to freeze. Close the freezer door after placing the bottles.
+FreezeCookedFood: Store the [*food*] in the freezer for long-term storage. Close the freezer door after placing the cooked food.
+FreezeIceTray: The ice cube tray has been filled with water. Take the tray and place it in the freezer to make ice. Close the freezer door after placing the tray.
+FreshProduceOrganization: Place the [*fruit/vegetable*] in the correct fridge rack based on whether it is a fruit or vegetable. Finally, close the fridge door.
+FryingPanAdjustment: Pick and place the pan from the current burner to another burner and turn the burner on.
+GarnishCake: Place one cherry either on top of the cake or on the cake plate, next to the cake. Then place one strawberry on the cake plate, next to the cake.
+GarnishCupcake: Take the cinnamon bottle from the cabinet and place it on the dining table, next to the plate with the cupcake. Then take the chocolate from the dining counter and place it on the cupcake plate.
+GarnishPancake: Take the strawberry from the fridge and place it on top of the pancake, located on the dining counter.
+GatherCuttingTools: Open the drawer on the *left/right* and place the cutting tools on the cutting board.
+GatherMarinadeIngredients: Retrieve the bottle and the shaker from the cabinet and place them next to the mixing bowl on the counter. Then add garlic from the fridge to the mixing bowl.
+GatherProduceWashing: Pick up the [*foods*] from the fridge and place them in the bowl next to the sink.
+GatherTableware: Gather all objects into one cabinet and sort the glasses and bowls to opposite sides.
+GatherVegetables: Pick up [*vegetables*] from the sink and place them on the cutting board on the counter.
+GetToastedBread: Start the toaster. Once the lever pops up, take the bread to the plate on the dining counter.
+HeatKebabSandwich: Pick up the kebab skewer and baguette bread, and place them inside the toaster oven. Close the toaster oven door and start by setting the timer.
+HeatMug: Pick the mug from the counter and place it inside the microwave. Then close the microwave.
+HeatMultipleWater: Pick the kettle from the cabinet and place it on a stove burner. Then pick the pot from the counter and place it on another stove burner. Finally, turn both burners on.
+HotDogSetup: Move the hot dog bun to the plate on the dining table and place the [*condiment*] next to that plate. Then navigate to the fridge and take the sausage and place it on the plate as well.
+JuiceFruitReamer: Juice the [*fruit*] by pressing it against the reamer.
+KettleBoiling: Pick the kettle from the counter and place it on a stove burner. Then turn the burner on.
+LemonSeasoningFish: Retrieve a lemon from the fridge and place it on the cutting board with the fish.
+LineUpCondiments: Take two condiments from the cabinet and move them on the counter near the stove. Make sure the condiments are lined up with each other, next to each other.
+LoadCondimentsInFridge: Place the [*condiments*] from the counter to the top shelf of the fridge. If the existing items in the fridge are on the top shelf, move them to other shelves.
+LoadDishwasher: Pick up the [*dishes*] from the counter, place them in the dishwasher, and close the dishwasher door.
+LoadFridgeByType: Place the bowl with the [*vegetable*] on the *top/second highest* shelf of the fridge. Place the bowl with the [*meat*] on the *second highest/top* highest shelf of the fridge.
+LoadFridgeFifo: Place the [*meat*] on the counter behind the older [*meat*] on the same shelf of the fridge to maintain FIFO order. Close the fridge door when finished.
+LoadPreparedFood: Place the tupperware on the *top/second highest* shelf of the fridge. Make space for the tupperware among the existing items by rearranging them on the shelves if needed. Close the fridge door when finished.
+LowerHeat: Lower the heat of the kettle.
+MakeBananaMilkshake: Grab the honey bottle and place it next to the blender. Then grab the milk and banana from the fridge, and place the milk next to the blender while placing the banana in the blender jug to prepare making a banana milkshake.
+MakeCheesecakeFilling: Add the butter stick, sugar cube, and cream cheese stick to the stand mixer bowl and then turn the speed knob to begin making cheesecake filling.
+MakeChocolateMilk: Place one chocolate piece and one sugar cube in the warm glass of milk to make chocolate flavored milk.
+MakeFruitBowl: Open the cabinet. Pick the [*fruits*] from the cabinet and place them into the bowl. Then close the cabinet.
+MakeIceLemonade: Grab a lemon wedge from the fridge and one ice cube from the ice bowl, and put them in the glass of lemonade.
+MakeIcedCoffee: Pick up an ice cube and place it in the glass of coffee.
+MakeLoadedPotato: Retrieve the reheated potato from the microwave, then place the potato, cheese, and condiment on the cutting board.
+ManipulateDrawer: {Open/Close} the {left/right} drawer.
+ManipulateLowerDoor: {Open/Close} the {oven/dishwasher} drop-down door.
+ManipulateSinkFaucet: {Turn on/Turn off} the sink faucet.
+ManipulateStoveKnob: {Turn on/Turn off} the {front left/front right/rear left/rear right} burner of the stove.
+MatchCupAndDrink: There is a wine glass and glass cup on the dining counter. Place the wine bottle next to the wine glass and the juice bottle next to the glass cup.
+MaximizeFreezerSpace: Take the [*source items*] from the *highest/second highest* rack and move them to the *second highest/highest* rack where the [*target items*] are located, to maximize freezer space. Close the freezer door after rearranging.
+MealPrepStaging: Place both pans onto different burners. Then place the [*vegetable*] and the [*meat*] on different pans.
+MeatSkewerAssembly: Move the kebab skewers from the plate to the oven tray for oven preparation.
+MeatTransfer: Retrieve the [*container*] from the cabinet, then place the raw meat into the [*container*] to avoid contamination.
+MicrowaveCorrectMeal: Place the bowl containing the [*food*] in the microwave. Close the microwave door and press the start button to microwave the meal.
+MicrowaveDefrostMeat: Place the tupperware containing the frozen [*meat*] in the microwave. Close the microwave door and press the start button to defrost the meat.
+MicrowavePressButton: Press the {start/stop} button on the microwave.
+MicrowaveThawing: Pick the [*food*] from the counter and place it in the microwave. Then turn on the microwave.
+MicrowaveThawingFridge: Transport the [*meat*] from the fridge to the microwave and turn on the microwave.
+MixCakeFrosting: Add butter and sugar cubes to the stand mixer bowl and then turn on the stand mixer to begin making frosting.
+MixedFruitPlatter: Pick up the [*fruit items*] from the fridge and place one fruit on each plate on the dining counter.
+MoveFreezerToFridge: Pick up the frozen [*meat*] from the freezer, place it on any shelf in the fridge, and close the fridge and freezer doors when done.
+MoveFridgeToFreezer: There's a [*meat*] in the fridge that needs to be moved to the freezer for freezing. Pick up the [*meat*] from the fridge, place it on any shelf in the freezer, and close the fridge and freezer doors when done.
+MoveToCounter: Pick the [*frosted item*] from the fridge and place it on the plate on the counter.
+MoveToFreezerDrawer: Take the [*food items*] from the fridge shelf and place them in the freezer drawer to begin freezing them.
+MultistepSteaming: Turn on the sink faucet. Then move the [*vegetable*] from the counter to the sink. Turn off the sink. Move the vegetable from the sink to the pot next to the stove. Finally move the pot to the [*burner location*] burner.
+NavigateKitchen: Navigate to the {kitchen location}.
+OpenBlenderLid: Open the blender by taking off the lid and placing it on the counter.
+OpenCabinet: Open the cabinet door(s).
+OpenDishwasher: Open the dishwasher door.
+OpenDrawer: Open the {left/right} drawer.
+OpenDropDownDoor: Open the {oven/dishwasher} drop-down door.
+OpenElectricKettleLid: Press the button to open the lid of the electric kettle.
+OpenFridge: Open the fridge door(s).
+OpenFridgeDrawer: Fully open the fridge drawer.
+OpenMicrowave: Open the microwave door.
+OpenOven: Open the oven door.
+OpenStandMixerHead: Open the stand mixer head.
+OpenToasterOvenDoor: Open the toaster oven door.
+OrganizeBakingIngredients: Gather the eggs and milk located in the vicinity of the sink area and place them right next to the bowl.
+OrganizeCleaningSupplies: Open the cabinet. Pick the [*cleaning supply*] and place it next to the sink. Then close the cabinet.
+OrganizeCoffeeCondiments: Pick the *syrup bottle/cinnamon* and honey bottle from the cabinet and place them next to the mug.
+OrganizeCondiments: There are various items on the counter. Only move the condiments/shakers into the cabinet.
+OrganizeMeasuringCups: Organize the measuring cups left to right, smallest to largest. The measuring cups must be rotated so the handle points directly outward towards the front of the counter. Make sure the measuring cups are upright.
+OrganizeMetallicUtensils: Pick up the metallic utensils from the counter and place them in the open drawer. Make sure not to pick up any wooden utensils.
+OrganizeMugsByHandle: Pick the mug on the counter and place it in the cabinet with the handle facing the right, like the mugs already inside.
+OrganizeVegetables: Place the [*vegetable1*] and the [*vegetable2*] on separate cutting boards.
+OvenBroilFish: Place the fish on the *bottom/top* rack of the oven, and slide the tray back inside. Close the oven door.
+PJSandwichPrep: Pick up the two toasted bread slices and place them in a bowl next to the toaster. Then carry the bowl to the dining counter and place it next to the peanut butter bottle and jelly jar to make a peanut butter and jelly sandwich.
+PackDessert: Add the [*dessert*] to the tupperware that contains the [*food*].
+PackFoodByTemp: Place the cold items ([*cold items*]) from the fridge in one tupperware on the dining counter. Place the warm items ([*warm items*]) in the stove area in another tupperware.
+PackFruitContainer: Pick the [*fruits*] from the fridge and place them inside the [*container*] on the counter.
+PackIdenticalLunches: Place one [*vegetable*] and one [*meat*] in each tupperware on the nearby counter, to pack two identical lunches.
+PackSnack: Take the snack from the cabinet and place it next to the tupperware containing the packed lunch on the counter to take on the go.
+PanTransfer: Pick up the pan and dump the vegetables in it onto the plate. Then return the pan to the stove.
+PastryDisplay: Place the pastries on the plates.
+PickPlaceCabinetToCounter: Pick the item from the cabinet and place it on the counter.
+PickPlaceCoffee: Pick the object from {the counter and place it under the coffee machine dispenser / under the coffee machine dispenser and place it on the counter}.
+PickPlaceCounterToBlender: Pick the item from the counter and place it in the blender.
+PickPlaceCounterToCabinet: Pick the item from the counter and place it in the cabinet.
+PickPlaceCounterToDrawer: Pick the item from the counter and place it in the drawer.
+PickPlaceCounterToMicrowave: Pick the item from the counter and place it in the microwave.
+PickPlaceCounterToOven: Place the item on the {bottom/top} rack of the oven.
+PickPlaceCounterToSink: Pick the item from the counter and place it in the sink.
+PickPlaceCounterToStandMixer: Place the item in the stand mixer bowl.
+PickPlaceCounterToStove: Pick the item from the plate and place it in the pan.
+PickPlaceCounterToToasterOven: Place the item on the rack of the toaster oven.
+PickPlaceDrawerToCounter: Pick the item from the drawer and place it on the counter.
+PickPlaceFridgeDrawerToShelf: Pick the item from the fridge drawer and place it on a fridge shelf.
+PickPlaceFridgeShelfToDrawer: Pick the item from the fridge shelf and place it in the fridge drawer.
+PickPlaceMicrowaveToCounter: Pick the item from the microwave and place it on container located on the counter.
+PickPlaceSinkToCounter: Pick the item from the sink and place it on the container located on the counter.
+PickPlaceStoveToCounter: Pick the item from the pan and place it in the container.
+PickPlaceToasterOvenToCounter: Pick the item from the toaster oven and place it on the plate on the counter.
+PickPlaceToasterToCounter: Place the toasted item on a plate.
+PlaceBeveragesTogether: Place the drinks on the dining counter in a tight cluster.
+PlaceBreakfastItemsAway: Pick up the [*breakfast items*] from the dining counter and place them in the open cabinet to store away breakfast items.
+PlaceDishesBySink: Pick the [*dishes*] from the counter and place them on the counter next to the sink.
+PlaceEqualIceCubes: There are four ice cubes in the ice bowl. Place two ice cubes in each glass of water.
+PlaceFoodInBowls: Pick both bowls and place them on the counter. Then place the [*food1*] in one bowl and place the [*food2*] in the other bowl.
+PlaceIceInCup: There are two ice cubes in the ice bowl. Place both ice cubes in the glass cup.
+PlaceLidToBoil: Place the lid on the saucepan on the stove to boil the water faster.
+PlaceMeatInMarinade: Retrieve the [*meat*] from the fridge and place it on the saucepan with marinade on the stove.
+PlaceMicrowaveSafeItem: Place the microwavable item in the microwave. Then, close the microwave door and press the start button.
+PlaceOnDishRack: Transfer the clean items from the right sink basin to the dish rack for drying. Leave any dirty items in the left basin untouched.
+PlaceStraw: Pick up the straw from the *left/right* drawer and put it inside the smoothie cup.
+PlaceVegetablesEvenly: Pick up the [*vegetables*] from the counter and place them inside the pan. Make sure they are evenly distributed and not overlapping each other.
+PlaceVeggiesInDrawer: Place the [*vegetables*] inside the fridge drawer. Close the drawer after placing the vegetables.
+PlateSteakMeal: Create a steak meal by picking up the steak and asparagus from the tray and placing them on the plate. Leave the [*other food*] on the tray.
+PlateStoreDinner: Place one of the steaks on the plate and the other in the bowl. Then place the bowl in the fridge.
+PortionFruitBowl: Take the fruits from the plate on the dining counter and place two fruits in each bowl.
+PortionHotDogs: Place one bun and one sausage from the bowl on each plate.
+PortionInTupperware: Place one cooked food and one vegetable from the large plate to each tupperware container.
+PortionOnSize: Take the smaller bowl and place it next to the appetizer plate on the dining counter, and place the larger bowl next to the plate with cooked food.
+PortionYogurt: Place two yogurt containers on each plate.
+PreRinseStation: Place the [*left object*] in the left basin and the [*right item*] in the right basin of the sink.
+PreSoakPan: Pick the pan and sponge and place them into the sink. Then turn on the water.
+PreheatOven: Preheat the oven by turning the temperature knob.
+PreheatPot: Turn on the burner for the pot on the stove. Wait thirty seconds for the pot to heat up. Then add the [*vegetable*] to the pot.
+PrepForSanitizing: Pick the [*cleaning supplies*] from the cabinet and place them on the counter.
+PrepForTenderizing: Open the cabinet, retrieve the rolling pin, and place it next to the meat on the cutting board to prepare for tenderizing.
+PrepFridgeForCleaning: Open the fridge, remove the [*fruit*], [*vegetable*], and [*meat*], and place them on any counter.
+PrepMarinatingMeat: Pick the [*meat*] from the [*container*] and place it on the cutting board. Then pick the [*condiment*] from the cabinet and place it next to the cutting board.
+PrepSinkForCleaning: Move the [*drinkware*] from next to the sink to the open cabinet. Then, move the bowl with the [*food*] to the fridge to clear the area for faucet cleaning.
+PrepareBroilingStation: Pick up the tongs from the counter and place them near the plate next to the oven.
+PrepareCheeseStation: Pick the cheese from the fridge and the cheese grater from the cabinet and place them next to the salad bowl.
+PrepareCocktailStation: There is a bowl on the dining counter. Grab a lemon wedge from the fridge and place it in the bowl. Then get the liquor bottle and glass cup from the cabinet and place them next to the bowl.
+PrepareCoffee: Pick the mug from the cabinet, place it under the coffee machine dispenser, and press the start button.
+PrepareDishwasher: Open the dishwasher door and pull out the top rack.
+PrepareDrinkStation: There is a tray on the dining counter. Grab the cup, mug, and pitcher and place them on the tray. The pitcher may be placed next to the tray if it cannot fit the tray.
+PrepareSandwichStation: Carry the bowl containing the sandwich ingredients from the fridge and place it on the counter near the toaster oven. Next, pick up the baguette from the fridge and place it near the toaster oven as well.
+PrepareSausageCheese: Retrieve the sausage and cheese from the fridge and place them on the cutting board on the counter.
+PrepareSmoothie: Pick the [*fruits*] from the fridge and place them on the plate next to the blender to make a fruit smoothie.
+PrepareSoupServing: Open the cabinet and move the ladle to the pot. Then close the cabinet.
+PrepareStoringLeftovers: Retrieve the tupperware and aluminum foil from the cabinet and place them on the dining counter near the plate with [*food*] to prepare for storing leftovers.
+PrepareToast: Pick the bread, place it on the cutting board, pick the jam, place it on the counter, and close the cabinet.
+PrepareVegetableRoasting: Pick the [*vegetable*] from the fridge and hold it under the sink faucet to wash it. Then place it on the tray next to the sink to prepare for roasting.
+PrepareVeggieDip: Pick the [*vegetable*] and the cream cheese from the fridge, place them in the blender, and turn it on.
+PrepareVeggiesForSteaming: Rinse the [*vegetables*] in the colander under running water briefly. Then place the colander with the vegetables on the counter next to the stove to prepare for steaming.
+PressChicken: Pick up the spatula from the plate and lightly press it against the chicken for a few seconds, then release.
+PrewashFoodAssembly: Pick the [*food*] from the cabinet and place it in the bowl. Then pick the bowl and place it in the sink. Then turn on the sink facuet.
+PrewashFoodSorting: Pick the [*food1*] from the cabinet and place them in one bowl. Pick the [*food2*] from the sink and place it in the other bowl.
+QuickThaw: Retrieve the frozen meat and place it in the pot on a burner. Then turn the burner on.
+RearrangeFridgeItems: Move the [*items*] from the [*initial shelf*] to the [*target shelf*] to make space. Then, place the pitcher from the counter on the cleared [*initial shelf*].
+RecycleBottlesBySize: Place the large bottle from the dining counter next to the other large bottle outside the sink, and place the small bottle from the dining counter next to the other small bottle inside the sink.
+RecycleBottlesByType: Move the plastic bottles in the middle to the plastics group, and the glass bottles in the middle to the glass group.
+RecycleSodaCans: Four empty soda cans are scattered around the kitchen. Gather all the cans and cluster them next to the stove for recycling.
+RecycleStackedYogurt: Stack the yogurt containers by placing the smaller containers on top of the larger containers.
+RefillCondimentStation: The dining table condiment station is running low on [*condiment*]. Refill the condiment station by opening the cabinet and taking the [*condiment*] from the cabinet and placing it on the dining table.
+ReheatMeal: Place the tupperware containing the [*meat*] and [*vegetable*] meal in the microwave. Close the microwave door and press the start button to reheat the meal.
+ReheatMeatOnStove: The cooked [*meat*] has gone cold. Place it on the pan on the stove to reheat it.
+RemoveBroiledFish: Take the fish from the oven and place it on the plate on the counter.
+RemoveCuttingBoardItems: Remove the [*vegetable*] and [*meat*] from the cutting board to prepare it for cleaning.
+RemoveSteamedVegetables: The [*vegetables*] are done steaming. Take them out of the saucepan and place them on the plate on the counter.
+ReorganizeFrozenVegetables: Take the [*frozen vegetables*] out of the freezer and place them in the tupperware container on the counter. Then put the tupperware containing the vegetables back in the freezer.
+ResetCabinetDoors: Close all open cabinet doors.
+RestockBowls: Open the cabinet. Pick the bowls from the counter and place them in the cabinet. Then close the cabinet.
+RestockCannedFood: Restock the canned food cabinet by taking the new fresh canned food from the counter and placing it in the cabinet. Then, take the old canned food from the cabinet and place it on the counter.
+RestockPantry: Pick the cans from the counter and place them in their designated side in the cabinet.
+RestockSinkSupplies: Restock the sink supplies by placing the sponge and soap dispenser on the counter and next to the sink. Make sure the soap dispenser is upright.
+RetrieveIceTray: Open the freezer door, pick up the ice cube tray from the freezer, and place it on the dining counter.
+RetrieveMeat: Retrieve the [*meat*] from the fridge and place it on the cutting board.
+ReturnHeatedFood: The microwave is finished heating the [*meat*] and [*vegetable*]. Take the bowl containing the food and place it on the dining counter.
+ReturnWashingSupplies: Pick up the [*cleaning supplies*] from the sink, and place them back in the cabinet.
+RinseBowls: Rinse each bowl for a few seconds and place them down in the sink or on the counter.
+RinseCuttingBoard: Turn on the sink faucet with hot water and rinse the cutting board for ten seconds, then turn off the faucet. Push the cutting board to reach the water if necessary.
+RinseFragileItem: Rinse the teapot briefly and place it in the dish rack when done.
+RinseSinkBasin: Turn on the sink and manuever the spout to wash all locations of the sink basin.
+RotatePan: Rotate the pan to help distribute the heat more evenly.
+SanitizePrepCuttingBoard: Grab the spray bottle from the cabinet, then place it next to the cutting board for sanitizing. Then grab the dish brush from the countertop next to the sink and place it next to the cutting board.
+SanitizeSink: Pick up the sponge from the counter and rub it across the sink. When finished, drop the sponge.
+ScalePortioning: Take the [*meat*] from the fridge and place it on the digital scale on the counter by the fridge. Wait a few seconds for a reading, then move it to the plate on the dining counter.
+ScrubBowl: Use the sponge to scrub the bowl inside the sink.
+ScrubCuttingBoard: Pick up the sponge from the counter and clean the cutting board by briefly scrubbing or pressing down on the cutting board. Once finished, release the sponge.
+SearingMeat: Grab the pan from the cabinet and place it on the [*burner location*] burner on the stove. Then place the [*meat*] on the stove and turn the burner on.
+SeasoningSpiceSetup: Move the [*condiments*] from the cabinet to the dining counter.
+SeasoningSteak: Retrieve the shaker from the cabinet and place it next the steak on a plate on the dining table.
+SeparateFreezerRack: Take the meat container that has the [*meat*] and place it on the second highest rack of the freezer. Then take the vegetable container that has the [*vegetables*] and place it on the highest rack of the freezer.
+SeparateRawIngredients: Place the meat/seafood item(s) on the cutting board and the vegetable item(s) in the bowl to avoid cross-contamination.
+ServeMealJuice: Pick up the orange juice cups from the counter and place one next to each plate on the dining counter.
+ServeSteak: Pick up the pan with the steak in it and place it on the dining table. Then place the steak on the plate.
+ServeTea: Pick the cup of tea, navigate to the dining table, and place it on the saucer.
+ServeWarmCroissant: Take out the warm croissant from the toaster oven and place it on the plate.
+SetBowlsForSoup: Move the bowls from the cabinet to the plates on the dining table.
+SetUpCuttingStation: Pick up the knife from the drawer and place it on the cutting board. Then place the meat from the plate to the cutting board.
+SetUpSpiceStation: Collect the [*spice*], [*bottle*], and [*shaker*] from the cabinet and place them next to the stove.
+SetupBowls: Pick up the bowls from the cabinet and place each bowl in front of a stool on the dining counter.
+SetupButterPlate: Retrieve the butter from the fridge and place it on a plate on the dining table. Then retrieve the butter knife by the fridge and place it near the plate.
+SetupFruitBowl: Retrieve the [*fruits*] from the fridge and place them into the bowl on the dining table.
+SetupFrying: Pick the pan from the cabinet and place it on the stove. Then turn on the stove burner for the pan.
+SetupSodaBowl: Open the fridge, grab two sodas, and place both sodas inside the bowl with ice on the dining counter.
+SetupWineGlasses: Retrieve the wine glasses from the counter and place one next to each plate.
+ShakePan: Grip the pan handle, lift and shake it lightly to move the [*vegetable*] inside the pan. Place the pan back down on the stove once finished.
+SimmeringSauce: Place the pan on the [*burner location*] burner on the stove. Then place the tomato and the onion in the pan and turn on the [*burner location*] burner.
+SizeSorting: Stack the [*tableware*] from largest to smallest.
+SlideDishwasherRack: Fully slide the top dishwasher rack {in/out}.
+SlideOvenRack: Fully slide the oven rack {in/out}.
+SlideToasterOvenRack: Fully slide the toaster oven tray {in/out}.
+SnackSorting: Place the bar in the bowl and close the drawer.
+SoakSponge: Soak the sponge with water for a few seconds and then drop it inside the sink.
+SortBreakfastIngredients: Place the jam next to the plate of bread and the cereal next to the carton of milk on the dining counter.
+SortingCleanup: Pick the mug and place it in the sink. Pick the bowl and place it in the open cabinet and then close the cabinet.
+SpicyMarinade: Open the cabinet. Place the bowl and condiment on the counter. Then place the lime and garlic on the cutting board.
+StackBowlsCabinet: Pick up the bowls on the counter and stack them on top of one another in the open cabinet. Place the smaller bowl on top of the larger bowl.
+StackBowlsInSink: Stack the bowls in the sink.
+StackCans: Stack two cans on top of the other two cans in the cabinet.
+StartCoffeeMachine: Press the button on the coffee machine to serve coffee.
+StartElectricKettle: Close the electric kettle lid and turn on the electric kettle.
+SteamFish: Place the fish on the pan with soy sauce and turn the stove knob on to start steaming.
+SteamInMicrowave: Pick the [*vegetable*] from the sink and place it in the bowl. Then pick the bowl and place it in the microwave. Then close the microwave door and press the start button.
+SteamVeggiesWithWater: Place the [*vegetables*] in the saucepan with water and put the lid on to begin steaming the vegetables.
+StirVegetables: Put the [*vegetables*] in the pot. Retrieve the spatula and lightly stir the vegetables in the pot.
+StockingBreakfastFoods: Pick the [*packaged foods*] from the counter and place them in the cabinets closest to them.
+StopSlowCooking: Turn off the stove burner and place the saucepan lid on the counter to prepare serving the broth.
+StoreDumplings: Place two dumplings into each of the tupperware containers and then place the containers in the fridge.
+StoreLeftoversByType: Transport the [*meat*] and [*vegetable*] to the fridge. Place the [*meat*] on the rack containing meat and place the [*vegetable*] on the rack containing the vegetable, ensuring meats and vegetables are on different racks.
+StoreLeftoversInBowl: Pick the chicken drumstick and [*vegetable*] from their plates and place them in the bowl. Then put the bowl in the fridge.
+StrainerSetup: Open the cabinet and setup a tea strainer by placing it in the bowl upright.
+SweetSavoryToastSetup: Pick the avocado and bread from the counter and place them on the plate. Then pick the jam from the cabinet and place it next to the plate. Lastly close the cabinet door.
+SweetenCoffee: Take a sugar cube from the saucer and place it inside the coffee. Then, grab milk from the fridge and place it next to the coffee on the counter to sweeten the coffee.
+SweetenHotChocolate: Pick up the sugar cube(s) and place them in the saucepan with hot chocolate.
+ThawInSink: Pick the [*item*] from the counter and place it in the sink. Then turn on the sink faucet.
+TiltPan: Tilt the pan slightly to move the [*vegetable*] inside the pan. Place the pan back down on the stove once finished.
+ToastBagel: Pick up the bagel from the plate, place it on the toaster oven rack, close the door, and set the timer.
+ToastBaguette: Pull the toaster oven rack outwards. Pick up the baguette from the plate and place it on the toaster oven rack. Close the toaster oven door fully and set the temperature to the lowest setting.
+ToastHeatableIngredients: Open the toaster oven door and place the heatable sandwich ingredients on the rack only. Make sure the cold/unheable items are still on the plate.
+ToastOnCorrectRack: Open the toaster oven door. Place the [*bread*] on the *top/bottom* rack in the toaster oven and place the [*meat*] on the *bottom/top* rack.
+ToastOneSlotPair: Move the bread slice from the broken *left/right* slot to the working *right/left* slot-pair so both slices can toast together. Then press that lever to start toasting.
+ToasterOvenBroilFish: Place the fish on the tray of the toaster oven, and slide the tray back inside. Close the toaster oven door and set the temperature to the max to begin broiling the fish.
+TongBuffetSetup: Take the tongs from the drawer on the *left/right* and place them on the dining counter next to the tray containing the [*food*].
+TransportCookware: Move the pot and pan from the stove into the sink.
+TurnOffMicrowave: Press the stop button on the microwave.
+TurnOffSimmeredSauceHeat: Wait until the marinara sauce is simmered to a deep red color and then turn off the stove.
+TurnOffSinkFaucet: Turn off the sink faucet.
+TurnOffStove: Turn off the [burner location] burner of the stove.
+TurnOnBlender: Turn on the blender by pressing the power button.
+TurnOnElectricKettle: Press down the lever to turn on the electric kettle.
+TurnOnMicrowave: Press the start button on the microwave.
+TurnOnSinkFaucet: Turn on the sink faucet.
+TurnOnStove: Turn on the [burner location] burner of the stove.
+TurnOnToaster: Push down the lever of the toaster to turn it on.
+TurnOnToasterOven: Turn on the toaster oven by setting the timer.
+TurnSinkSpout: Turn the sink spout to the {left/right}.
+UtensilShuffle: Pick and place the utensils into the open drawer.
+VeggieDipPrep: Place the two vegetables and bowl onto the tray for setting up a vegetable dip station.
+WaffleReheat: Open the microwave, place the bowl with waffle inside the microwave, then close the microwave door and turn it on.
+WarmCroissant: Pick the croissant and place it on the pan. Then turn on the stove to warm the croissant.
+WashFish: Take the fish out of the fridge, briefly rinse it in the sink, and place it on the tray next to the sink.
+WashFruitColander: Put the colander in the sink, put the [*fruit*] in the colander, and turn on the sink faucet and pour water over the colander.
+WashInSaucepan: Pick up the [*vegetables*] from the fridge and place them in the saucepan with water next to the sink for soak washing.
+WashLettuce: Wash the lettuce in the sink by running water over it.
+WeighIngredients: Pick the [*packaged food*] and place it on the digital scale for weighing, and close the cabinet.
+WipeTable: Pick up the sponge from the counter and wipe the counter by gripping it and pressing it against the surface. Once finished, release the sponge.
+YogurtDelightPrep: Place the yogurt and fruit(s) onto the counter.

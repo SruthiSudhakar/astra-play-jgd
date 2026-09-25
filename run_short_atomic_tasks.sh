@@ -12,10 +12,10 @@ if [[ -z "${OPENAI_API_KEY:-}" ]]; then
 fi
 
 TASKS=(
-  # SlideToasterOvenRack            # 5s
-  # TurnOnBlender                   # 5s
-  # TurnOnToaster                   # 6s
-  # CloseElectricKettleLid          # 7s
+  SlideToasterOvenRack            # 5s
+  TurnOnBlender                   # 5s
+  TurnOnToaster                   # 6s
+  CloseElectricKettleLid          # 7s
   CloseFridgeDrawer               # 7s
   NavigateKitchen                 # 7s
   OpenElectricKettleLid           # 8s

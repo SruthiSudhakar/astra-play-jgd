@@ -7,6 +7,59 @@ The loop is observations → Astra XYZ + gripper command → numerical IK → ro
 position controller → simulated PandaOmron robot → updated observations. By default,
 observations are numerical scene state. Add `--vision` to use the three RGB cameras.
 
+## Action coordinate frame
+
+Astra returns **absolute XYZ in the episode's robot frame**, in meters: +X forward,
++Y left, +Z up. The origin is the Panda arm's mounting body (`robot0_link0`), sampled
+after initial settling. The frame stays fixed even if the mobile base drifts.
+The controlled point is between the fingers; wrist orientation remains fixed.
+
+Gripper, object, and fixture positions and orientations in model observations use
+this frame, including free-joint poses. Articulated joint coordinates are unchanged;
+object sizes remain in object-local axes. Targets are converted back to world coordinates before the existing IK.
+Logs record the frame transform and both robot/world targets and measured positions.
+
+Every Astra request includes `recent_actions`: the five most recent completed or
+rejected actions, oldest first (empty on the first request). Each compact entry has
+the target and gripper command, requested and measured XYZ displacement, tracking
+error, requested-direction progress fraction, and status. An action is reached only
+if endpoint error is below 1 cm and it makes at least 80% progress in the requested
+direction. Commands shorter than 1 mm use endpoint error alone. Only the latest two
+entries retain Astra's note. All coordinates
+use the episode robot frame. The detailed start/end positions and outcome prose are
+still saved in local traces, but are not resent to Astra. `last_action_result` is
+also omitted because it duplicated the newest history entry. This history uses robot
+state, not simulator contact labels or object positions, and is included in both
+vision and numerical mode. Earlier camera images are not resent.
+
+All three camera images include projected robot-axis rulers: red +X, green +Y,
+blue +Z. The mount ruler is 15 cm; a parallel copy at the tip is 10 cm. The latter
+does not redefine the origin. These virtual overlays are drawn over objects and
+can fall outside a camera view. They appear in vision input, recordings, and the
+browser display, not the native MuJoCo viewer.
+
+Verify the coordinate conversion and controller without any API calls:
+
+```sh
+python robot.py --headless --test-axes
+```
+
+This commands +/-3 cm on each robot axis, with 8 simulated seconds per motion,
+returning to the initial tip position between tests. It records expected/measured
+world displacement and fails if tracking error exceeds 5 mm. A failure can also
+indicate contact or an unreachable pose in the chosen scene.
+
+Then test a visual approach with Astra:
+
+```sh
+mjpython robot.py --vision --env CheesyBread --seed 0 --max-calls 12 \
+  --instruction "Move toward the microwave handle using the robot-axis overlays. Keep the gripper open."
+```
+
+Explicit XYZ instructions now refer to the robot frame, not world coordinates.
+The frame and overlays clarify control directions; visual localization can still
+be inaccurate. The custom instruction does not replace the existing success check.
+
 ## Camera input for Astra
 
 Use `--instruction "Your goal here"` to override the goal sent to Astra. For example:
@@ -35,10 +88,10 @@ Action feedback includes robot tracking error and rejected commands. It does **n
 send object/fixture poses or sizes, fixture roles, object-contact labels, object lift,
 or simulator task-success status. Pickup names the target by its language description.
 The simulator still evaluates task/pickup success locally, without giving those
-private measurements to Astra. Output remains absolute world XYZ + open/close.
+private measurements to Astra. Output is absolute robot-frame XYZ + open/close.
 
 This is RGB plus proprioception, not image-only control. There is no depth sensor or
-camera-calibration input yet, so estimating metric XYZ from images can be difficult;
+camera-calibration matrix input; the axis overlays supply local visual rulers, but estimating metric XYZ can still be difficult;
 visual task success is not guaranteed. Images add API token usage and may add latency.
 
 `--no-camera-views` hides the browser display but still sends images with `--vision`.
@@ -302,7 +355,7 @@ Inspect the exact numerical scene observation, without an API call:
 mjpython robot.py --inspect --headless
 ```
 
-The observation contains every episode object and fixture: name/type, world XYZ,
+The observation contains every episode object and fixture: name/type, robot-frame XYZ,
 quaternion (wxyz), articulated joint positions, available sizes, and object language
 labels, plus robot arm joint positions and gripper XYZ. Pickup requests additionally
 include gripper and lift feedback as described above. This is privileged simulator
