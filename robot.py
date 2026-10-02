@@ -1,4 +1,17 @@
-"""RoboCasa365: numerical scene state -> Astra XYZ -> IK -> joint controller."""
+"""
+RoboCasa365: numerical scene state -> Astra XYZ -> IK -> joint controller.
+
+Usage:
+mjpython robot.py --task TurnOnElectricKettle \
+ --seed 6 --vision --max-calls 20 \
+ --instruction "Press down the lever under the kettle's handle to turn on the electric kettle."
+
+mjpython robot.py --task PickPlaceCounterToBlender \
+ --seed 6 --vision --max-calls 20 \
+ --instruction "Pick the pear by closing the gripper securely around the big base of the pear. Then place it in the blender. "
+
+"""
+
 import argparse
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor
@@ -11,12 +24,12 @@ import time
 import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from typing import Literal
 
 import mujoco
 import numpy as np
 from openai import OpenAI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from scipy.spatial.transform import Rotation
 from run_log import RunLog
 
 # Offline pickup phases: above, descend, close, lift. Tuned for the default pear.
@@ -50,6 +63,15 @@ class RobotFrame:
 
     def orientation(self, world_rotation):
         return self.rotation.T @ np.asarray(world_rotation).reshape(3, 3)
+
+    def target_rotation(self, yaw_pitch_roll, start_rotation):
+        """Absolute offsets: R_world = R_frame Rz(yaw) Ry(pitch) Rx(roll) R_start_robot."""
+        delta = Rotation.from_euler("ZYX", yaw_pitch_roll).as_matrix()
+        return self.rotation @ delta @ self.rotation.T @ start_rotation
+
+    def measured_ypr(self, world_rotation, start_rotation):
+        delta = self.rotation.T @ world_rotation @ start_rotation.T @ self.rotation
+        return Rotation.from_matrix(delta).as_euler("ZYX")
 
 
 class CameraViews:
@@ -164,7 +186,8 @@ class CameraViews:
                     draw.polygon([tuple(end), tuple(end - 6 * direction + 3 * side),
                                   tuple(end - 6 * direction - 3 * side)], fill=color)
                 draw.text(tuple(end + [2, -5]), "+" + "XYZ"[axis], fill=color, stroke_width=1, stroke_fill="black")
-            draw.text(tuple(start + [3, 3]), tag, fill="white", stroke_width=1, stroke_fill="black")
+            if tag == "mount":
+                draw.text(tuple(start + [3, 3]), tag, fill="white", stroke_width=1, stroke_fill="black")
         draw.rectangle((0, height - 23, width, height), fill="black")
         draw.text((4, height - 21), "Robot axes: mount 15cm / tip copy 10cm", fill="white")
         return np.asarray(canvas)
@@ -199,11 +222,15 @@ class Position(BaseModel):
     x: float
     y: float
     z: float
-    gripper: Literal["open", "close"]
+    yaw: float = 0.0
+    pitch: float = 0.0
+    roll: float = 0.0
+    gripper: float = Field(ge=0.0, le=1.0, description="Absolute opening: 0 fully closed, 1 fully open")
     note: str = ""
 
 
-def action_result(call, command, start, end, rejection=None):
+def action_result(call, command, start, end, rejection=None, orientation_error=None,
+                  measured_ypr=None):
     """Robot-only feedback; reaching a waypoint does not imply task success."""
     target = np.array([command.x, command.y, command.z])
     requested = target - start
@@ -215,9 +242,10 @@ def action_result(call, command, start, end, rejection=None):
     # target began within the 1 cm endpoint tolerance.
     progress = (1.0 if requested_distance < 0.001 else
                 float(np.dot(measured, requested) / requested_distance**2))
-    reached = rejection is None and error < 0.01 and progress >= 0.8
+    reached = (rejection is None and error < 0.01 and progress >= 0.8
+               and orientation_error is not None and orientation_error < 0.05)
     result = (f"Action rejected; no motion executed: {rejection}" if rejection else
-              "Waypoint reached (within 1 cm and at least 80% requested progress)." if reached else
+              "Pose reached (within 1 cm, 0.05 rad, and at least 80% requested position progress)." if reached else
               "Target not reached; motion may be obstructed or there may be another cause.")
     return {
         "call": call, "coordinate_frame": "episode_robot; meters",
@@ -228,6 +256,8 @@ def action_result(call, command, start, end, rejection=None):
         "measured_displacement_xyz": measured.round(5).tolist(),
         "requested_progress_fraction": round(progress, 4),
         "waypoint_error_m": round(error, 5),
+        "orientation_error_rad": None if orientation_error is None else round(orientation_error, 5),
+        "measured_yaw_pitch_roll": None if measured_ypr is None else np.asarray(measured_ypr).round(5).tolist(),
         "status": "rejected" if rejection else "reached" if reached else "not_reached",
         "result": result,
     }
@@ -241,6 +271,9 @@ def prompt_history(actions):
         entry = {
             "call": item["call"],
             "target_xyz": [item["action"][axis] for axis in "xyz"],
+            "target_ypr": [item["action"][axis] for axis in ("yaw", "pitch", "roll")],
+            "measured_ypr": item["measured_yaw_pitch_roll"],
+            "orientation_error_rad": item["orientation_error_rad"],
             "gripper": item["action"]["gripper"],
             "requested_delta_xyz": item["requested_displacement_xyz"],
             "measured_delta_xyz": item["measured_displacement_xyz"],
@@ -261,6 +294,19 @@ def make_env(args):
     import robocasa  # Registers RoboCasa tasks with robosuite.
     import robosuite
     from robosuite.controllers import load_composite_controller_config
+    from robosuite.models.grippers import PandaGripper, register_gripper
+
+    @register_gripper
+    class AbsolutePandaGripper(PandaGripper):
+        """Keep Panda geometry/actuators; replace directional input with aperture targets."""
+        def format_action(self, action):
+            # [-1, +1] here means closed -> open. The two finger position
+            # actuators have opposite ranges, so their normalized goals differ.
+            opening = float(np.clip(action[0], -1, 1))
+            target = np.array([opening, -opening])
+            self.current_action = self.current_action + np.clip(
+                target - self.current_action, -self.speed, self.speed)
+            return self.current_action
 
     config = load_composite_controller_config(robot="PandaOmron")
     config["body_parts"]["right"] = {
@@ -270,7 +316,7 @@ def make_env(args):
         "kp": 150, "damping_ratio": 1, "gripper": {"type": "GRIP"},
     }
     return robosuite.make(
-        args.env, robots="PandaOmron", controller_configs=config,
+        args.env, robots="PandaOmron", gripper_types="AbsolutePandaGripper", controller_configs=config,
         has_renderer=not args.headless,
         has_offscreen_renderer=False,
         use_camera_obs=False, use_object_obs=True,
@@ -354,14 +400,14 @@ def choose_position(observation, mock, target, images=None, log=None, call=None)
         tip = np.array(observation["tip_xyz"])
         if "robocasa_task" in observation or observation.get("input_mode") == "vision":
             # Connectivity/evaluator smoke test only; no scripted benchmark solver.
-            return Position(x=tip[0], y=tip[1], z=tip[2], gripper="open")
-        gripper = "open"
+            return Position(x=tip[0], y=tip[1], z=tip[2], gripper=1.0)
+        gripper = 1.0
         if "pickup" in observation:
             pickup = observation["pickup"]
             phase = min(pickup["mock_phase"], 3)
             origin = np.array(pickup["initial_object_xyz"])
             target = origin + [0, 0, MOCK_PICKUP_Z[phase]]
-            gripper = "close" if phase >= 2 else "open"
+            gripper = 0.0 if phase >= 2 else 1.0
         delta = target - tip
         xyz = tip + delta * min(1, 0.15 / max(np.linalg.norm(delta), 1e-9))
         return Position(x=xyz[0], y=xyz[1], z=xyz[2], gripper=gripper)
@@ -385,7 +431,8 @@ def choose_position(observation, mock, target, images=None, log=None, call=None)
                     "Each observation gives proprioception and either numerical scene state or three camera images. "
                     "Work toward the user's goal in small, deliberate motions; re-check the observation after every motion. "
                     "Respond only with a JSON object matching the provided schema: an absolute episode-robot-frame XYZ waypoint in meters (x, y, z), "
-                    "a gripper command (open or close), and a `note`. Do not write any text outside the JSON object. "
+                    "yaw, pitch, roll in radians, a continuous gripper opening from 0 to 1, and a `note`. "
+                    "Do not write any text outside the JSON object. "
                     "In the `note`, in one or two sentences, say what you observe in the current observation and why you chose this motion. "
                     "The user is watching these notes to see what you see and what you decide, so write them for a human reader. "
                     # "Use the supplied observations. In vision mode infer object/fixture locations "
@@ -396,16 +443,31 @@ def choose_position(observation, mock, target, images=None, log=None, call=None)
                     "+X is forward out of the robot, +Y is the robot's left, +Z is up. "
                     "This frame is frozen for the episode; these are not image-left/right directions. "
                     "XYZ controls the grasp point between the fingers. Targets are absolute positions, not displacements. "
-                    "Wrist orientation stays fixed at its starting orientation; you control only XYZ and open/close. "
+                    "Gripper is an absolute opening target: 0 fully closed, 1 fully open, 0.5 half open. "
+                    "Full finger travel gives approximately 0.08 meters opening; 0.5 corresponds to about 0.04 meters. "
+                    "It is not a velocity or force command. Contact can stop the fingers before the requested opening. "
+                    "Compare measured_opening with command to assess aperture; this alone does not prove a secure grasp. "
+                    "You control XYZ, wrist yaw/pitch/roll, and gripper opening. Choose wrist orientation as needed for good alignment and avoiding collisions. Angles are ABSOLUTE offsets from "
+                    "the episode's starting gripper orientation, not increments from the latest pose. "
+                    "All zero angles restore that starting orientation. To keep the current orientation, "
+                    "copy tip_yaw_pitch_roll from the observation. Use radians, not degrees. "
+                    "The rotation convention is Rz(yaw) Ry(pitch) Rx(roll) applied to the starting "
+                    "orientation in the fixed episode robot frame: roll about robot +X, then pitch "
+                    "about robot +Y, then yaw about robot +Z. Positive angles follow the right-hand rule; "
+                    "positive yaw turns counterclockwise viewed from above. Prefer small angular changes "
+                    "(about 0.1-0.2 radians) and reobserve. Rotation is about the grasp point; account "
+                    "for the palm and fingers sweeping through space. IK does not check collisions. "
                     "The controller does not intentionally drive the base or torso, but small physical drift is possible. "
                     "Camera overlays show +X red, +Y green, +Z blue: 15cm arrows at the mount, "
-                    "and a parallel 10cm copy at the current grasp point labeled tip. The tip copy is not the coordinate origin. "
+                    "and a parallel 10cm copy at the current grasp point. The tip copy is not the coordinate origin. "
                     "These virtual rulers may be hidden by the image boundary and are drawn over scene objects. "
                     "IK converts targets to joint motion; unreachable targets are rejected and contacts may block motion. "
                     "Use modest steps and the measured result, rather than assuming every target was reached. "
                     "recent_actions contains up to five previous actions, oldest first, with targets, gripper commands, "
                     "requested versus measured XYZ displacement, progress fraction along the requested direction, "
                     "tracking error, and status in the episode robot frame. "
+                    "Pose reached requires position error below 1 cm, orientation error below 0.05 radians, "
+                    "and at least 80% position progress (waived for position changes below 1 mm). "
                     "Only the latest two actions retain your notes to keep the context concise. "
                     "Use this history to assess progress and change your approach when movements repeatedly fail. "
                     "Target not reached means motion may be obstructed or there may be another cause; "
@@ -450,9 +512,15 @@ class Arm:
         self.jp = np.zeros((3, self.model.nv))
         self.jr = np.zeros_like(self.jp)
         self.hold = self.data.qpos[self.qidx].copy()
-        self.gripper = "open"
+        self.gripper = 1.0
 
-    def solve(self, xyz):
+    @property
+    def gripper_opening(self):
+        fingers = [float(self.env.sim.data.get_joint_qpos(j)) for j in self.robot.gripper["right"].joints]
+        return float(np.clip((fingers[0] - fingers[1]) / 0.08, 0, 1))
+
+    def solve(self, xyz, rotation=None):
+        rotation = self.rotation if rotation is None else rotation
         # if not np.isfinite(xyz).all() or np.linalg.norm(xyz - self.xyz) > 0.35:
         #     raise ValueError("Waypoint must be finite and within 0.35 m of the current tip")
         # Solve on scratch data: never teleport the actual simulated robot.
@@ -462,7 +530,9 @@ class Arm:
             mujoco.mj_comPos(self.model, self.scratch)
             current = self.scratch.site_xmat[self.site].reshape(3, 3)
             position_error = xyz - self.scratch.site_xpos[self.site]
-            rotation_error = 0.5 * np.cross(current.T, self.rotation.T).sum(axis=0)
+            # SO(3) rotation vector remains valid at 180 degrees, where the old
+            # cross-product error vanishes despite the orientation being wrong.
+            rotation_error = Rotation.from_matrix(rotation @ current.T).as_rotvec()
             if np.linalg.norm(position_error) < 0.002 and np.linalg.norm(rotation_error) < 0.02:
                 return self.scratch.qpos[self.qidx].copy()
             mujoco.mj_jacSite(self.model, self.scratch, self.jp, self.jr, self.site)
@@ -473,7 +543,7 @@ class Arm:
                 self.scratch.qpos[self.qidx] + np.clip(dq, -0.08, 0.08),
                 self.limits[:, 0] + 0.01, self.limits[:, 1] - 0.01,
             )
-        raise ValueError("IK could not reach waypoint with the fixed gripper orientation")
+        raise ValueError("IK could not reach the requested position and orientation")
 
     @property
     def xyz(self):
@@ -484,7 +554,7 @@ class Arm:
         self.hold += np.clip(goal - self.hold, -0.025, 0.025)
         action = self.robot.composite_controller.create_action_vector({
             "right": self.hold - self.data.qpos[self.qidx],
-            "right_gripper": [1 if self.gripper == "close" else -1], "base_mode": -1,
+            "right_gripper": [2 * self.gripper - 1], "base_mode": -1,
         })
         self.env.step(action)
 
@@ -560,7 +630,8 @@ def run(args):
         arm.rotation = arm.data.site_xmat[arm.site].reshape(3, 3).copy()
         frame = RobotFrame(env)
         log.event("Coordinate frame", {"name": "episode_robot", "mount_body": frame.body_name,
-                    "origin_world_xyz": frame.origin.tolist(), "rotation_robot_to_world": frame.rotation.tolist()})
+                    "origin_world_xyz": frame.origin.tolist(), "rotation_robot_to_world": frame.rotation.tolist(),
+                    "start_gripper_rotation_world": arm.rotation.tolist()})
         task_instruction = env.get_ep_meta()["lang"] if args.task else None
         if args.task and not task_instruction.strip():
             raise ValueError(f"{args.task} did not provide a task instruction")
@@ -572,6 +643,8 @@ def run(args):
             return
         if args.inspect:
             state = vision_state(env, arm.site, frame) if args.vision else scene_state(env, arm.site, frame)
+            state["tip_yaw_pitch_roll"] = frame.measured_ypr(
+                arm.data.site_xmat[arm.site].reshape(3, 3), arm.rotation).round(5).tolist()
             if args.task:
                 state["robocasa_task"] = ({"name": args.task, "instruction": task_instruction}
                                           if args.vision else task_state(env, task_instruction))
@@ -627,6 +700,8 @@ def run(args):
                     result = f"RoboCasa {args.task} success=False. " if args.task else ""
                     raise RuntimeError(f"{result}Action budget exhausted: {feedback}")
                 observation = vision_state(env, arm.site, frame) if args.vision else scene_state(env, arm.site, frame)
+                observation["tip_yaw_pitch_roll"] = frame.measured_ypr(
+                    arm.data.site_xmat[arm.site].reshape(3, 3), arm.rotation).round(5).tolist()
                 observation.update(instruction=instruction,
                                    recent_actions=prompt_history(recent_actions))
                 if args.task:
@@ -634,6 +709,8 @@ def run(args):
                                                    if args.vision else task_state(env, task_instruction))
                 observation["gripper"] = {
                     "command": arm.gripper,
+                    "measured_opening": arm.gripper_opening,
+                    "opening_convention": "0 closed, 1 open; absolute aperture target",
                     "finger_joint_positions": [float(env.sim.data.get_joint_qpos(j))
                                                for j in arm.robot.gripper["right"].joints],
                 }
@@ -665,18 +742,23 @@ def run(args):
                 if command.note:
                     print(f"Note: {command.note}", flush=True)
                 try:
-                    if not np.isfinite(waypoint).all():
-                        raise ValueError("Waypoint must be finite")
-                    goal = arm.solve(waypoint)
+                    ypr = np.array([command.yaw, command.pitch, command.roll])
+                    if not np.isfinite(np.r_[waypoint, ypr]).all():
+                        raise ValueError("Position and orientation must be finite")
+                    target_rotation = frame.target_rotation(ypr, arm.rotation)
+                    goal = arm.solve(waypoint, target_rotation)
                     arm.gripper = command.gripper
                     moving, motion_steps, stable = True, 0, 0
-                    print(f"Robot XYZ {robot_waypoint.round(4)} -> world XYZ {waypoint.round(4)}, gripper={arm.gripper} -> IK joints {goal.round(3)}", flush=True)
+                    print(f"Robot XYZ {robot_waypoint.round(4)}, YPR {ypr.round(4)} rad -> world XYZ {waypoint.round(4)}, gripper={arm.gripper} -> IK joints {goal.round(3)}", flush=True)
                     log.event("Action accepted", {"action": command.model_dump(), "ik_joints": goal.tolist(),
                                                    "simulation_steps": 160, "coordinate_frame": "episode_robot",
-                                                   "world_target_xyz": waypoint.tolist()}, calls)
+                                                   "world_target_xyz": waypoint.tolist(),
+                                                   "world_target_rotation": target_rotation.tolist()}, calls)
                 except ValueError as error:
-                    feedback = f"Rejected episode_robot waypoint {robot_waypoint.tolist()}: {error}"
-                    summary = action_result(calls, command, action_start, frame.to_robot(arm.xyz), str(error))
+                    feedback = f"Rejected episode_robot waypoint {robot_waypoint.tolist()}, YPR {ypr.tolist()}: {error}"
+                    summary = action_result(calls, command, action_start, frame.to_robot(arm.xyz), str(error),
+                                            measured_ypr=frame.measured_ypr(
+                                                arm.data.site_xmat[arm.site].reshape(3, 3), arm.rotation))
                     recent_actions.append(summary)
                     print(feedback, flush=True)
                     log.event("Action rejected", {"reason": feedback, "action_summary": summary}, calls)
@@ -691,7 +773,7 @@ def run(args):
             if args.pickup and moving:
                 lift = float(env.sim.data.body_xpos[body, 2] - initial_object_xyz[2])
                 grasped = bool(env._check_grasp(arm.robot.gripper["right"], env.objects[args.object]))
-                lift_stable = lift_stable + 1 if lift >= 0.08 and grasped and arm.gripper == "close" else 0
+                lift_stable = lift_stable + 1 if lift >= 0.08 and grasped else 0
                 if lift_stable >= 10 and motion_steps + 1 >= 160:
                     log.event("Success", {"object_lift_m": lift, "grasped": grasped}, calls)
                     print(f"SUCCESS: object grasped and lifted {lift:.3f} m for 10 updates.", flush=True)
@@ -725,16 +807,21 @@ def run(args):
                     if args.vision:
                         feedback = (f"Actual tip (episode_robot) {frame.to_robot(arm.xyz).tolist()}; waypoint error {waypoint_error:.4f} m; "
                                     f"gripper command={arm.gripper}. Inspect the new images to assess progress.")
-                    summary = action_result(calls, command, action_start, frame.to_robot(arm.xyz))
+                    current_rotation = arm.data.site_xmat[arm.site].reshape(3, 3)
+                    orientation_error = float(Rotation.from_matrix(target_rotation @ current_rotation.T).magnitude())
+                    summary = action_result(calls, command, action_start, frame.to_robot(arm.xyz),
+                                            orientation_error=orientation_error,
+                                            measured_ypr=frame.measured_ypr(current_rotation, arm.rotation))
                     recent_actions.append(summary)
                     feedback += (f" Requested displacement {summary['requested_displacement_xyz']} m; "
                                  f"measured displacement {summary['measured_displacement_xyz']} m "
-                                 f"(episode_robot). {summary['result']}")
+                                 f"(episode_robot); actual YPR {summary['measured_yaw_pitch_roll']} rad; "
+                                 f"orientation error {orientation_error:.4f} rad. {summary['result']}")
                     print(feedback, flush=True)
                     log.event("Action result", {"feedback": feedback, "tip_robot_xyz": frame.to_robot(arm.xyz).tolist(),
                                                "tip_world_xyz": arm.xyz.tolist(), "waypoint_error_m": waypoint_error,
                                                "action_summary": summary}, calls)
-                    if not args.task and not args.pickup and error < 0.01 and stable >= 10:
+                    if not args.task and not args.pickup and error < 0.01 and stable >= 10 and summary["status"] == "reached":
                         print("SUCCESS: reaching objective achieved (not the kitchen pick/place task).", flush=True)
                         log.event("Success", {"reaching_error_m": error}, calls)
                         return

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Run every RoboCasa atomic task with a horizon (mean episode length) under 20 seconds.
+# Run a selected subset of RoboCasa atomic tasks with horizons under 20 seconds.
 # Source: https://robocasa.ai/docs/build/html/tasks/atomic_tasks.html
-# (36 of 65 atomic tasks; horizon in seconds noted on each line)
+# (26 selected tasks; horizon in seconds noted on each line)
 
 set -u
 
@@ -12,12 +12,13 @@ if [[ -z "${OPENAI_API_KEY:-}" ]]; then
 fi
 
 TASKS=(
+  # PickPlaceFridgeShelfToDrawer    # 12s
+  # PickPlaceToasterOvenToCounter   # 18s
   SlideToasterOvenRack            # 5s
   TurnOnBlender                   # 5s
-  TurnOnToaster                   # 6s
   CloseElectricKettleLid          # 7s
   CloseFridgeDrawer               # 7s
-  NavigateKitchen                 # 7s
+  # NavigateKitchen                 # 7s
   OpenElectricKettleLid           # 8s
   OpenFridgeDrawer                # 8s
   OpenStandMixerHead              # 8s
@@ -25,19 +26,12 @@ TASKS=(
   CloseStandMixerHead             # 9s
   OpenBlenderLid                  # 9s
   SlideDishwasherRack             # 9s
-  PreheatOven                     # 10s
-  SlideOvenRack                   # 10s
   TurnSinkSpout                   # 10s
   TurnOnElectricKettle            # 11s
   CloseToasterOvenDoor            # 12s
-  OpenOven                        # 12s
-  PackDessert                     # 12s
   PickPlaceCounterToDrawer        # 12s
   PickPlaceFridgeDrawerToShelf    # 12s
-  PickPlaceFridgeShelfToDrawer    # 12s
-  CloseOven                       # 14s
   LowerHeat                       # 14s
-  MakeIcedCoffee                  # 14s
   OpenToasterOvenDoor             # 14s
   CheesyBread                     # 15s
   PickPlaceDrawerToCounter        # 15s
@@ -45,7 +39,6 @@ TASKS=(
   CloseBlenderLid                 # 17s
   TurnOnStove                     # 17s
   PickPlaceCounterToBlender       # 18s
-  PickPlaceToasterOvenToCounter   # 18s
   AdjustToasterOvenTemperature    # 19s
   CloseDrawer                     # 19s
 )
